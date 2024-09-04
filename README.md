@@ -6,7 +6,7 @@
 ## Team Members
 
 ### Mohammad Arjamand Ali (team leader)
---- PLACEHOLDER TEXT ---
+Hi, I'm Mohammad. I'm a senior at EMU studying Computer Science & Mathematics. I'm currently working for [Truss](https://gettruss.io) as a Software Engineer and am working on a research project in NLP with transformers. My main areas of expertise are web dev with Ruby on Rails, machine learning, and AWS.
 
 ### Ali Almadhagi
 --- PLACEHOLDER TEXT ---
