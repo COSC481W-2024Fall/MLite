@@ -26,6 +26,7 @@ I'm a computer science major graduation in the Winter 2025. I a currently work a
 - Absences (in meeting/classes) are good as long everyone is informed beforehand (unless emergencies), and work is done in a timely manner. 
 - If there is clear intention for sabotage (like deleting), report to professor and fail them.
 - For changing code someone else's code, its fine. Unless its a massive change, in which case letting the person know/keep them in the loop of the change.
+- For scenarios where work is not done, we can distrubute work amongst others/include someone else as long as it is communicated beforehand. If its too complicated or too much of an overhead, it will be dealth with accourdingly by either pushing to next sprint or dropping it.
 - Language of communication is English
 - No issue with face mask. Can wear/not wear if you want.
 
