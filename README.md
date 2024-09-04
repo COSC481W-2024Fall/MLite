@@ -3,6 +3,13 @@
 ## Description
 MLite is a simplified machine learning platform designed to make building, training, and deploying models accessible for users without deep expertise in machine learning. Think of it as mini data scientist. Users can upload datasets and the app will give them analyses, they will receive automatic suggestions for the most suitable models, they can schedule training for these models with the option to deploy them for real-time predictions.
 
+- Data Upload: Easily upload tabular datasets (e.g., CSV files) through the platform’s interface.
+- Dataset Analysis: Analyze the dataset for features & meanginful datapoints/metrics.
+- Model Suggestions: App suggests appropriate machine learning models such as linear regression, SVMs, decision trees or neural networks.
+-	Model Training: Users can schedule model training jobs, which are run in the cloud to minimize local resource usage.
+-	Model Deployment: Once training is complete, models can be deployed to a hosted environment for immediate use in future predictions.
+- User-Friendly Interface: The platform offers an intuitive interface that guides users from data preparation to deployment, targeted for non-technical people.
+
 ## Team Members
 
 ### Mohammad Arjamand Ali (team leader)
