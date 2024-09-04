@@ -20,7 +20,7 @@ I'm currently working at Liberty Robotics on fine tuning segmentation models; I'
 --- PLACEHOLDER TEXT ---
 
 ### Ziad Sabri
---- PLACEHOLDER TEXT ---
+I'm a computer science major graduation in the Winter 2025. I a currently work as an office manager at Eastern Michigan Housing and pursing a carrer in Data Enginering I like designing, constructing, maintaining and troubleshooting an organization's data.
 
 ## Team Policy
 - Absences (in meeting/classes) are good as long everyone is informed beforehand (unless emergencies), and work is done in a timely manner. 
