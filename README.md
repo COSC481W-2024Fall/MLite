@@ -17,7 +17,7 @@ Hello, Brian here 👋
 I'm currently working at Liberty Robotics on fine tuning segmentation models; I'm also working on an AI detector algorithm in my spare time! I'm currently in the final year of my Bachelor's degree in computer science, and looking to begin my Master's degree once I finish!
 
 ### Nicholas Fiori
---- PLACEHOLDER TEXT ---
+Hello. I'm Nicholas Fiori. I am a 22-year-old applied computer science major graduating this semester. I love just about anything related to automotive subjects, from racing to new advances to wrenching on a car.
 
 ### Ziad Sabri
 I'm a computer science major graduation in the Winter 2025. I a currently work as an office manager at Eastern Michigan Housing and pursing a carrer in Data Enginering I like designing, constructing, maintaining and troubleshooting organization's data.
