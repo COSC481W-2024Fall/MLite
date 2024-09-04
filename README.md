@@ -1,7 +1,7 @@
 # MLite
 
 ## Description
---- PLACEHOLDER TEXT ---
+MLite is a simplified machine learning platform designed to make building, training, and deploying models accessible for users without deep expertise in machine learning. Think of it as mini data scientist. Users can upload datasets and the app will give them analyses, they will receive automatic suggestions for the most suitable models, they can schedule training for these models with the option to deploy them for real-time predictions.
 
 ## Team Members
 
