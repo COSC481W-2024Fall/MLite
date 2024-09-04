@@ -21,11 +21,10 @@
 --- PLACEHOLDER TEXT ---
 
 ## Team Policy
-- How to handle absentees for emergency/sick
-- How to handle absentees for religious holidays
-- How to handle intentional damage/sabotage to work
-- How to handle this when a team member changes another member's work in the repository? Please set up a guideline for anyone who may want to change another member's work in the repository.
+- Absences (in meeting/classes) are good as long everyone is informed beforehand (unless emergencies), and work is done in a timely manner. 
+- If there is clear intention for sabotage (like deleting), report to professor and fail them.
+- For changing code someone else's code, its fine. Unless its a massive change, in which case letting the person know/keep them in the loop of the change.
 - Language of communication is English
-- Face mask policy
+- No issue with face mask. Can wear/not wear if you want.
 
 
