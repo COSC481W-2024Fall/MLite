@@ -54,8 +54,8 @@ docker run -it -v ./src:/app/src mlite /bin/bash
 # for homebrew, ignore if u already have it
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-brew install postgres@14
-brew services start postgres@14
+brew install postgresql@14
+brew services start postgresql@14
 
 brew install asdf
 # add this to your .zshrc file
