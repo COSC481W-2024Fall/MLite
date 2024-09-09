@@ -2,6 +2,7 @@
 FROM ubuntu:20.04
 
 # Set environment variables to avoid prompts during package installations
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Python, pip, and required system packages
 RUN apt-get update && apt-get install -y \
