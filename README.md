@@ -41,6 +41,11 @@ I'm a computer science major graduation in the Winter 2025. I a currently work a
 In order to run the docker image:
 Install docker
 ```
+git clone https://github.com/COSC481W-2024Fall/MLite.git
+```
+or use Github Desktop to clone the directory.
+```
+cd mlite
 docker build -t mlite .
 docker run -it -v ./src:/app/src mlite /bin/bash
 ``` 
