@@ -48,4 +48,38 @@ or use Github Desktop to clone the directory, then:
 cd mlite
 docker build -t mlite .
 docker run -it -v ./src:/app/src mlite /bin/bash
-``` 
+```
+## Setting up Ruby on Rails & postgres
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+brew install postgres@14
+brew services start postgres@14
+
+brew install asdf
+# add this to your .zshrc file
+export PATH="$HOME/.asdf/shims:$PATH"
+
+asdf plugin-add ruby
+asdf plugin-add nodejs
+asdf plugin-add yarn
+
+asdf install ruby latest
+asdf global ruby latest
+
+asdf install nodejs latest
+asdf global nodejs latest
+
+asdf install yarn latest
+asdf global yarn latest
+
+# run these to make sure they are installed
+ruby --version
+node --version
+yarn --version
+
+gem install rails
+
+rails -v
+
+```
