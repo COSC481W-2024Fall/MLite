@@ -51,6 +51,7 @@ docker run -it -v ./src:/app/src mlite /bin/bash
 ```
 ## Setting up Ruby on Rails & postgres
 ```
+# for homebrew, ignore if u already have it
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 brew install postgres@14
