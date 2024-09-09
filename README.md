@@ -37,4 +37,10 @@ I'm a computer science major graduation in the Winter 2025. I a currently work a
 - Language of communication is English
 - No issue with face mask. Can wear/not wear if you want.
 
-
+## To Run
+In order to run the docker image:
+Install docker
+```
+docker build -t mlite .
+docker run -it -v ./src:/app/src mlite /bin/bash
+``` 
