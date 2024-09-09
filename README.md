@@ -43,7 +43,7 @@ Install docker
 ```
 git clone https://github.com/COSC481W-2024Fall/MLite.git
 ```
-or use Github Desktop to clone the directory.
+or use Github Desktop to clone the directory, then:
 ```
 cd mlite
 docker build -t mlite .
