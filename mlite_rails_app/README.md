@@ -2,7 +2,7 @@
 
 ## Setup
 
-Before you go ahead, you need Ruby, Rails, and PostgreSQL installed. Open a terminal and:
+Before you go ahead, you need Ruby 3.3.1, Rails, and PostgreSQL installed. Open a terminal and:
 
 1. `cd` into this folder
 2. run `rails db:create` to create the database in postgres
