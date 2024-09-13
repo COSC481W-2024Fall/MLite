@@ -1,24 +1,10 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Setup
 
-Things you may want to cover:
+Before you go ahead, you need Ruby, Rails, and PostgreSQL installed. Open a terminal and:
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+1. `cd` into this folder
+2. run `rails db:create` to create the database in postgres
+3. run `rails s` to run a server
+4. go to a browser and type `localhost:3000` in the url. If u see a Rails landing page with the logo in the middle, it works as expected. 
