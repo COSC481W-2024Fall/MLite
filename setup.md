@@ -76,7 +76,7 @@ brew services list
 ## 2.1 Initialize a new Rails app
 
 ### 2.1.1 With PostgreSQL & Tailwind
-Run this to initialize a boilerplate Rails app. If you encounter an error, refer to #2.1.2)
+Run this to initialize a boilerplate Rails app (if you encounter an error, refer to #2.1.2)
 ```
 rails new my_app_1 --css tailwind --database=postgresql
 ```
