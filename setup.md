@@ -99,6 +99,7 @@ rails new my_app_1 --css tailwind
 - run `rails server` to run the server
 - go to `localhost:3000/posts` in your browser
 - from here, you can see your posts in your db, add new posts, delete posts, edit posts (basically all CRUD operations)
+  - FYI: default tailwind styles make everything look weird, but you can click around the text like 'New post'
 
 
 
