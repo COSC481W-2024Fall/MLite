@@ -1,3 +1,6 @@
+# 0.0 Preface
+These are instructions for installing & setting up everything for our ***app*** part of MLite (Rails, tailwind, postgresql). It was agreed we didn't need it for 
+the machine learning libraries. As for other tools like AWS and Docker, no extra setup is needed really (except making an account, downloading the desktop app, etc.)
 
 # 1.0 Installations
 Note: read all the instructions and comments for all steps.
