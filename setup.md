@@ -92,7 +92,7 @@ rails new my_app_1 --css tailwind
 - run `rails server` to run the server
 - go to `localhost:3000` in your browser, and there you go - you set up a Rails server
 
-## 2.3 (Optional) Adding basic pages to the app
+## 2.3 (Optional) Adding basic pages to the to check functionality
 - run `rails generate scaffold Post title:string content:text`
   - this will create a `posts` table in your db with the fields `title` and `content`
 - run `rails db:migrate` for changes to take affect
