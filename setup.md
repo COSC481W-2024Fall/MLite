@@ -43,8 +43,8 @@ asdf install nodejs latest
 asdf global nodejs latest
 
 asdf plugin add yarn
-asdf install nodejs yarn
-asdf global nodejs yarn
+asdf install yarn latest
+asdf global yarn latest
 
 # open a new terminal, type to verify
 node -v
