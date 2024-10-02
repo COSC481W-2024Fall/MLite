@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[128]:
+# In[150]:
 
 
 import torch
@@ -9,11 +9,12 @@ import subprocess
 import pandas as pd
 import sklearn
 from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-# In[145]:
+# In[166]:
 
 
 class MLAPI:
@@ -103,13 +104,31 @@ class MLAPI:
         pass
 
     def decision_tree(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100):
-        # TODO: METHOD STUB
-        pass
+        y = self.dataset[label]
+        if columns == None:
+            #assume all other columns and set X_columns to all features not label
+            X_columns = [col for col in self.dataset.columns if label not in col]
+        else:
+            # use only given columns
+            X_columns = columns
+        X = self.dataset[X_columns]
 
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_test_scaled = scaler.transform(X_test)
+        
+        self.model = DecisionTreeClassifier(random_state = random_state)
+        self.model.fit(X_train, y_train)
+        y_pred = self.model.predict(X_test)
+        accuracy = self.model.score(X_test, y_test)
+        print(f"Decision Tree Model Accuracy: {accuracy}")
+        return self.model
                 
 
 
-# In[146]:
+# In[167]:
 
 
 api = MLAPI()
@@ -117,14 +136,15 @@ api.set_local_csv_dataset()
 print(api.dataset)
 
 
-# In[147]:
+# In[168]:
 
 
 print(api.logistic_regression('Species', max_epochs=700))
 print(api.linear_regression('Species_Iris-versicolor', max_epochs=700))
+print(api.decision_tree('Species', max_epochs=700))
 
 
-# In[ ]:
+# In[148]:
 
 
 get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
