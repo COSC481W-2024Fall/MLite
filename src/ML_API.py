@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[150]:
+# In[175]:
 
 
 import torch
@@ -12,9 +12,16 @@ from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+import numpy as np
 
 
-# In[166]:
+# In[176]:
+
+
+
+
+
+# In[177]:
 
 
 class MLAPI:
@@ -40,12 +47,19 @@ class MLAPI:
             print("No GPU available in system!")
         
 
-    def set_local_csv_dataset(self, dataset="./Data/archive 2/Iris.csv"):
+    def set_local_csv_dataset(self, dataset=None):
         self.dataset_name = dataset
-        try:
-            self.dataset = pd.read_csv(self.dataset_name)
-        except:
-            print("Not CSV")
+        if dataset == None:
+            self.dataset = irisdf
+            from sklearn import datasets
+            iris = datasets.load_iris()
+            irisdf = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
+                                 columns= iris['feature_names'] + ['target'])
+        else:
+            try:
+                self.dataset = pd.read_csv(self.dataset_name)
+            except:
+                print("Not CSV")
 
     def set_local_json_dataset(self, dataset):
         pass
@@ -128,7 +142,7 @@ class MLAPI:
                 
 
 
-# In[167]:
+# In[178]:
 
 
 api = MLAPI()
@@ -136,15 +150,15 @@ api.set_local_csv_dataset()
 print(api.dataset)
 
 
-# In[168]:
+# In[181]:
 
 
-print(api.logistic_regression('Species', max_epochs=700))
-print(api.linear_regression('Species_Iris-versicolor', max_epochs=700))
-print(api.decision_tree('Species', max_epochs=700))
+print(api.logistic_regression('target', max_epochs=700))
+print(api.linear_regression('target', max_epochs=700))
+print(api.decision_tree('target', max_epochs=700))
 
 
-# In[148]:
+# In[169]:
 
 
 get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
