@@ -1,0 +1,3 @@
+class Deployment < ApplicationRecord
+
+end
