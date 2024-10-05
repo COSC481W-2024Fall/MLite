@@ -10,6 +10,13 @@ class ModelsController < ApplicationController
   def show
   end
 
+  def deploy
+    @model = Model.find(params[:id])
+    @model.update(status: 'deployed')
+    redirect_to @model, notice: "Model has been successfully deployed."
+  end
+
+
   # GET /models/new
   def new
     @model = Model.new
@@ -65,6 +72,6 @@ class ModelsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def model_params
-      params.require(:model).permit(:name, :description, :size, :features, :labels, :model_type, :hyperparams, :status, :training_job, :metrics)
+      params.require(:model).permit(:name, :description, :size, :features, :labels, :model_type, :hyperparams, :status, :training_job, :metrics, :file)
     end
 end

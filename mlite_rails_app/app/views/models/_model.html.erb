@@ -49,4 +49,13 @@
     <%= model.metrics %>
   </p>
 
+  <p>
+    <strong>File:</strong>
+    <% if model.file.attached? %>
+      <%= link_to "Download File", rails_blob_path(model.file, disposition: "attachment") %>
+    <% else %>
+      <em>No file attached</em>
+    <% end %>
+  </p>
+
 </div>
