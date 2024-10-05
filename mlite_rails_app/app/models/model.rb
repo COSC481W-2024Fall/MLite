@@ -1,6 +1,8 @@
 class Model < ApplicationRecord
   has_one_attached :file
 
+  validates :name, presence: true
+
   validate :file_size
   def file_size
     if file.attached? && file.blob.byte_size > 500.megabytes
