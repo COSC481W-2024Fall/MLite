@@ -1,0 +1,11 @@
+<% content_for :title, "New dataset" %>
+
+<h1>New dataset</h1>
+
+<%= render "form", dataset: @dataset %>
+
+<br>
+
+<div>
+  <%= link_to "Back to datasets", datasets_path %>
+</div>
