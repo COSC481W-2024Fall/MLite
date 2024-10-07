@@ -21,7 +21,7 @@ import numpy as np
 
 
 
-# In[177]:
+# In[184]:
 
 
 class MLAPI:
@@ -50,11 +50,11 @@ class MLAPI:
     def set_local_csv_dataset(self, dataset=None):
         self.dataset_name = dataset
         if dataset == None:
-            self.dataset = irisdf
             from sklearn import datasets
             iris = datasets.load_iris()
             irisdf = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
                                  columns= iris['feature_names'] + ['target'])
+            self.dataset = irisdf
         else:
             try:
                 self.dataset = pd.read_csv(self.dataset_name)
@@ -142,7 +142,7 @@ class MLAPI:
                 
 
 
-# In[178]:
+# In[185]:
 
 
 api = MLAPI()
@@ -150,7 +150,7 @@ api.set_local_csv_dataset()
 print(api.dataset)
 
 
-# In[181]:
+# In[186]:
 
 
 print(api.logistic_regression('target', max_epochs=700))
@@ -158,13 +158,8 @@ print(api.linear_regression('target', max_epochs=700))
 print(api.decision_tree('target', max_epochs=700))
 
 
-# In[169]:
+# In[1]:
 
-
-get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
-
-
-# In[ ]:
 
 
 
