@@ -4,29 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f84dbfd0-4450-4989-8f71-ac048dd5b0c0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/mlite_rails_app.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/controllers/deployments_controller.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/helpers/deployments_helper.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/deployment.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/deployments/_deployment.html.erb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/deployments/_deployment.json.jbuilder" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/deployments/_form.html.erb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/deployments/edit.html.erb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/deployments/index.html.erb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/deployments/index.json.jbuilder" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/deployments/new.html.erb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/deployments/show.html.erb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/views/deployments/show.json.jbuilder" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/migrate/20240930183902_create_deployments.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/controllers/deployments_controller_test.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/fixtures/deployments.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/models/deployment_test.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/system/deployments_test.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
+    <list default="true" id="f84dbfd0-4450-4989-8f71-ac048dd5b0c0" name="Changes" comment="Added the ability to create new, view, and stop deployments.&#10;&#10;1. Added ability to create deployments&#10;2. Added ability to view a list of deployments&#10;3. Added ability to stop deployments&#10;4. Status will display pending as default&#10;5. Deployment link will generate its own link&#10;&#10;Issue #5">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/deployment.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/deployment.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/models/deployment_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/models/deployment_test.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,21 +25,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "nicholas-fiori/deployments-rails-add-pages-and-functionality",
-    "last_opened_file_path": "//wsl.localhost/Ubuntu/home/nickfiori/MLite/mlite_rails_app",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "yarn",
-    "ruby.structure.view.model.defaults.configured": "true",
-    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.JavaScript",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;nicholas-fiori/deployments-rails-add-pages-and-functionality&quot;,
+    &quot;last_opened_file_path&quot;: &quot;//wsl.localhost/Ubuntu/home/nickfiori/MLite/mlite_rails_app&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
+    &quot;ruby.structure.view.model.defaults.configured&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.IDE.editor.colors.JavaScript&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RubyModuleManagerSettings">
     <option name="blackListedRootsPaths">
       <list>
@@ -151,11 +132,26 @@
       <workItem from="1727890771160" duration="181000" />
       <workItem from="1727890963194" duration="2633000" />
       <workItem from="1727965363812" duration="857000" />
-      <workItem from="1728013324937" duration="3418000" />
+      <workItem from="1728013324937" duration="4912000" />
+      <workItem from="1728318906975" duration="5592000" />
+      <workItem from="1728396843825" duration="1375000" />
     </task>
+    <task id="LOCAL-00001" summary="Added the ability to create new, view, and stop deployments.&#10;&#10;1. Added ability to create deployments&#10;2. Added ability to view a list of deployments&#10;3. Added ability to stop deployments&#10;4. Status will display pending as default&#10;5. Deployment link will generate its own link&#10;&#10;Issue #5">
+      <option name="closed" value="true" />
+      <created>1728017759255</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1728017759255</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added the ability to create new, view, and stop deployments.&#10;&#10;1. Added ability to create deployments&#10;2. Added ability to view a list of deployments&#10;3. Added ability to stop deployments&#10;4. Status will display pending as default&#10;5. Deployment link will generate its own link&#10;&#10;Issue #5" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added the ability to create new, view, and stop deployments.&#10;&#10;1. Added ability to create deployments&#10;2. Added ability to view a list of deployments&#10;3. Added ability to stop deployments&#10;4. Status will display pending as default&#10;5. Deployment link will generate its own link&#10;&#10;Issue #5" />
   </component>
 </project>
