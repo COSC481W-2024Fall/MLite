@@ -25,7 +25,7 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
-        format.html { redirect_to dataset_url(@dataset), notice: "Dataset was successfully created." }
+        format.html { redirect_to @dataset, notice: "Dataset was successfully created." }
         format.json { render :show, status: :created, location: @dataset }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +38,7 @@ class DatasetsController < ApplicationController
   def update
     respond_to do |format|
       if @dataset.update(dataset_params)
-        format.html { redirect_to dataset_url(@dataset), notice: "Dataset was successfully updated." }
+        format.html { redirect_to @dataset, notice: "Dataset was successfully updated." }
         format.json { render :show, status: :ok, location: @dataset }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -52,19 +52,19 @@ class DatasetsController < ApplicationController
     @dataset.destroy!
 
     respond_to do |format|
-      format.html { redirect_to datasets_url, notice: "Dataset was successfully destroyed." }
+      format.html { redirect_to datasets_path, status: :see_other, notice: "Dataset was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_dataset
-      @dataset = Dataset.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_dataset
+    @dataset = Dataset.find(params[:id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def dataset_params
-      params.require(:dataset).permit(:name, :description, :size, :columns, :n_rows, :dataset_type, :metrics)
-    end
+  # Only allow a list of trusted parameters through.
+  def dataset_params
+    params.require(:dataset).permit(:name, :description, :file, :size, :columns, :n_rows, :dataset_type, :metrics) # exclude :user_id
+  end
 end
