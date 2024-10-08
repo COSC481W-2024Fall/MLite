@@ -1,4 +1,5 @@
 class DatasetsController < ApplicationController
+
   before_action :set_dataset, only: %i[ show edit update destroy ]
 
   # GET /datasets or /datasets.json
