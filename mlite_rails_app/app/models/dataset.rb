@@ -1,6 +1,9 @@
 class Dataset < ApplicationRecord
   has_one_attached :file
 
+  # add validation for presence for name and dataet_tyop
+
+  validates :name, :dataset_type, presence: true
   validate :correct_file_type, :file_size_under_limit
 
   private

@@ -17,7 +17,7 @@ class DatasetsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create dataset" do
     assert_difference("Dataset.count") do
-      post datasets_url, params: { dataset: { columns: @dataset.columns, dataset_type: @dataset.dataset_type, description: @dataset.description, metrics: @dataset.metrics, n_rows: @dataset.n_rows, name: @dataset.name, size: @dataset.size } }
+      post datasets_url, params: { dataset: { description: @dataset.description, n_rows: @dataset.n_rows,dataset_type: @dataset.dataset_type, metrics: @dataset.metrics, dataset_type: @dataset.dataset_type, name: @dataset.name, size: @dataset.size } }
     end
 
     assert_redirected_to dataset_url(Dataset.last)
@@ -34,7 +34,7 @@ class DatasetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update dataset" do
-    patch dataset_url(@dataset), params: { dataset: { columns: @dataset.columns, dataset_type: @dataset.dataset_type, description: @dataset.description, metrics: @dataset.metrics, n_rows: @dataset.n_rows, name: @dataset.name, size: @dataset.size } }
+    patch dataset_url(@dataset), params: { dataset: { description: @dataset.description, n_rows: @dataset.n_rows,dataset_type: @dataset.dataset_type, metrics: @dataset.metrics, dataset_type: @dataset.dataset_type, name: @dataset.name, size: @dataset.size }}
     assert_redirected_to dataset_url(@dataset)
   end
 

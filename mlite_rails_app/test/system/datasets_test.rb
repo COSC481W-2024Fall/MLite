@@ -1,3 +1,4 @@
+# test/system/datasets_test.rb
 require "application_system_test_case"
 
 class DatasetsTest < ApplicationSystemTestCase
@@ -14,13 +15,13 @@ class DatasetsTest < ApplicationSystemTestCase
     visit datasets_url
     click_on "New dataset"
 
-    fill_in "Columns", with: @dataset.columns
-    fill_in "Dataset type", with: @dataset.dataset_type
-    fill_in "Description", with: @dataset.description
-    fill_in "Metrics", with: @dataset.metrics
-    fill_in "N rows", with: @dataset.n_rows
     fill_in "Name", with: @dataset.name
+    fill_in "Description", with: @dataset.description
+    fill_in "Dataset type", with: @dataset.dataset_type
     fill_in "Size", with: @dataset.size
+    fill_in "Columns", with: @dataset.columns
+    fill_in "N rows", with: @dataset.n_rows
+    attach_file "File", Rails.root.join("test/fixtures/files/sample.csv")
     click_on "Create Dataset"
 
     assert_text "Dataset was successfully created"
@@ -31,13 +32,13 @@ class DatasetsTest < ApplicationSystemTestCase
     visit dataset_url(@dataset)
     click_on "Edit this dataset", match: :first
 
-    fill_in "Columns", with: @dataset.columns
-    fill_in "Dataset type", with: @dataset.dataset_type
-    fill_in "Description", with: @dataset.description
-    fill_in "Metrics", with: @dataset.metrics
-    fill_in "N rows", with: @dataset.n_rows
     fill_in "Name", with: @dataset.name
+    fill_in "Description", with: @dataset.description
+    fill_in "Dataset type", with: @dataset.dataset_type
     fill_in "Size", with: @dataset.size
+    fill_in "Columns", with: @dataset.columns
+    fill_in "N rows", with: @dataset.n_rows
+    attach_file "File", Rails.root.join("test/fixtures/files/sample.csv")
     click_on "Update Dataset"
 
     assert_text "Dataset was successfully updated"
@@ -50,4 +51,6 @@ class DatasetsTest < ApplicationSystemTestCase
 
     assert_text "Dataset was successfully destroyed"
   end
+
+
 end
