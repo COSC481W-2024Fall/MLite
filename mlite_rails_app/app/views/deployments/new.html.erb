@@ -1,0 +1,11 @@
+<% content_for :title, "New deployment" %>
+
+<h1>New deployment</h1>
+
+<%= render "form", deployment: @deployment %>
+
+<br>
+
+<div>
+  <%= link_to "Back to deployments", deployments_path %>
+</div>

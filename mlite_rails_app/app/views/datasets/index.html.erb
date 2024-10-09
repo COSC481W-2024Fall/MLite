@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Datasets" %>
+
+<h1>Datasets</h1>
+
+<div id="datasets">
+  <% @datasets.each do |dataset| %>
+    <%= render dataset %>
+    <p>
+      <%= link_to "Show this dataset", dataset %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New dataset", new_dataset_path %>

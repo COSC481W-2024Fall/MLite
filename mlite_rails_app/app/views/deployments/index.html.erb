@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Deployments" %>
+
+<h1>Deployments</h1>
+
+<div id="deployments">
+  <% @deployments.each do |deployment| %>
+    <%= render deployment %>
+    <p>
+      <%= link_to "Show this deployment", deployment %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New deployment", new_deployment_path %>
