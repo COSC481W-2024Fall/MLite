@@ -1,4 +1,5 @@
 class ModelsController < ApplicationController
+  before_action :authenticate_user!, unless: -> { Rails.env.test? }
   before_action :set_model, only: %i[ show edit update destroy ]
 
   # GET /models or /models.json

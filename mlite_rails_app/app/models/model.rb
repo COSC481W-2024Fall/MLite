@@ -1,5 +1,6 @@
 class Model < ApplicationRecord
   has_one_attached :file
+  belongs_to :dataset, optional: true
 
   validates :name, presence: true
 
