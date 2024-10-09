@@ -1,4 +1,5 @@
 class DeploymentsController < ApplicationController
+  before_action :authenticate_user!, unless: -> { Rails.env.test? }
   before_action :set_deployment, only: %i[ show edit update destroy ]
 
   # GET /deployments or /deployments.json
