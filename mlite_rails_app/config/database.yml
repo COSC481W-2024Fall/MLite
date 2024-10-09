@@ -80,6 +80,7 @@ test:
 #
 production:
   <<: *default
+  host: <%= ENV['MLITE_RDS_ENDPOINT'] %>
   database: mlite_rails_app_production
-  username: mlite_rails_app
-  password: <%= ENV["MLITE_RAILS_APP_DATABASE_PASSWORD"] %>
+  username: postgres
+  password: <%= ENV['MLITE_RDS_PASSWORD'] %>
