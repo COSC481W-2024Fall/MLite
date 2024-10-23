@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[175]:
+# In[3]:
 
 
 import torch
@@ -15,13 +15,13 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 
-# In[176]:
+# In[ ]:
 
 
 
 
 
-# In[184]:
+# In[6]:
 
 
 class MLAPI:
@@ -47,7 +47,7 @@ class MLAPI:
             print("No GPU available in system!")
         
 
-    def set_local_csv_dataset(self, dataset=None):
+    def set_local_csv_dataset(self, dataset=None, encoding=None):
         self.dataset_name = dataset
         if dataset == None:
             from sklearn import datasets
@@ -57,7 +57,10 @@ class MLAPI:
             self.dataset = irisdf
         else:
             try:
-                self.dataset = pd.read_csv(self.dataset_name)
+                if encoding != None:
+                    self.dataset = pd.read_csv(self.dataset_name, encoding=encoding)
+                else:
+                    self.dataset = pd.read_csv(self.dataset_name)
             except:
                 print("Not CSV")
 
@@ -142,24 +145,25 @@ class MLAPI:
                 
 
 
-# In[185]:
+# In[ ]:
 
 
-api = MLAPI()
-api.set_local_csv_dataset()
-print(api.dataset)
 
 
-# In[186]:
+
+# In[ ]:
 
 
-print(api.logistic_regression('target', max_epochs=700))
-print(api.linear_regression('target', max_epochs=700))
-print(api.decision_tree('target', max_epochs=700))
+
 
 
 # In[1]:
 
+
+get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
+
+
+# In[ ]:
 
 
 
