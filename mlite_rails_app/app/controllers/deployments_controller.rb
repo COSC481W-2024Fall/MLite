@@ -4,7 +4,7 @@ class DeploymentsController < ApplicationController
 
   # GET /deployments or /deployments.json
   def index
-    @deployments = Deployment.all
+    @deployments = current_user.deployments.all
   end
 
   # GET /deployments/1 or /deployments/1.json
@@ -14,10 +14,12 @@ class DeploymentsController < ApplicationController
   # GET /deployments/new
   def new
     @deployment = Deployment.new
+    @models = current_user.models
   end
 
   # GET /deployments/1/edit
   def edit
+    @models = current_user.models
   end
 
   # POST /deployments or /deployments.json
@@ -33,7 +35,8 @@ class DeploymentsController < ApplicationController
     @deployment = Deployment.new(
       name: name,
       status: status,
-      deployment_link: deployment_link
+      deployment_link: deployment_link,
+      model_id: deployment_params[:model_id]
     )
 
     respond_to do |format|
@@ -41,6 +44,7 @@ class DeploymentsController < ApplicationController
         format.html { redirect_to deployment_url(@deployment), notice: "Deployment was successfully created." }
         format.json { render :show, status: :created, location: @deployment }
       else
+        @models = current_user.models
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @deployment.errors, status: :unprocessable_entity }
       end
@@ -74,11 +78,12 @@ class DeploymentsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_deployment
-    @deployment = Deployment.find(params[:id])
+    @deployment = current_user.deployments.find(params[:id])
+    @model = @deployment.model
   end
 
   # Only allow a list of trusted parameters through.
   def deployment_params
-    params.require(:deployment).permit(:name)
+    params.require(:deployment).permit(:name, :model_id)
   end
 end

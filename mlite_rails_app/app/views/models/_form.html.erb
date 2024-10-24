@@ -12,6 +12,11 @@
   <% end %>
 
   <div>
+    <%= form.label :dataset_id, "Select Dataset" %>
+    <%= form.select :dataset_id, options_from_collection_for_select(@datasets, :id, :name, params.dig(:model, :dataset_id)) %>
+  </div>
+
+  <div>
     <%= form.label :name, style: "display: block" %>
     <%= form.text_field :name %>
   </div>

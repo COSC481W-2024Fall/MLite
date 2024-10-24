@@ -4,7 +4,7 @@ class ModelsController < ApplicationController
 
   # GET /models or /models.json
   def index
-    @models = Model.all
+    @models = current_user.models.all
   end
 
   # GET /models/1 or /models/1.json
@@ -21,10 +21,12 @@ class ModelsController < ApplicationController
   # GET /models/new
   def new
     @model = Model.new
+    @datasets = current_user.datasets
   end
 
   # GET /models/1/edit
   def edit
+    @datasets = current_user.datasets
   end
 
   # POST /models or /models.json
@@ -36,6 +38,7 @@ class ModelsController < ApplicationController
         format.html { redirect_to model_url(@model), notice: "Model was successfully created." }
         format.json { render :show, status: :created, location: @model }
       else
+        @datasets = current_user.datasets
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @model.errors, status: :unprocessable_entity }
       end
@@ -68,11 +71,12 @@ class ModelsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_model
-      @model = Model.find(params[:id])
+      @model = current_user.models.find(params[:id])
+      @dataset = @model.dataset
     end
 
     # Only allow a list of trusted parameters through.
     def model_params
-      params.require(:model).permit(:name, :description, :size, :features, :labels, :model_type, :hyperparams, :status, :training_job, :metrics, :file)
+      params.require(:model).permit(:name, :description, :size, :features, :labels, :model_type, :hyperparams, :status, :training_job, :metrics, :file, :dataset_id)
     end
 end
