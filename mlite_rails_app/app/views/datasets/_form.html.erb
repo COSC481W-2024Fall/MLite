@@ -20,40 +20,15 @@
     <%= form.text_area :description %>
   </div>
 
-  <div>
-    <%= form.label :size, style: "display: block" %>
-    <%= form.number_field :size %>
-  </div>
-
-  <div>
-    <%= form.label :columns, style: "display: block" %>
-    <%= form.number_field :columns %>
-  </div>
-
-  <div>
-    <%= form.label :n_rows, style: "display: block" %>
-    <%= form.number_field :n_rows %>
-  </div>
-
-  <div>
-    <%= form.label :dataset_type, style: "display: block" %>
-    <%= form.text_field :dataset_type %>
-  </div>
-
-  <div>
-    <%= form.label :metrics, style: "display: block" %>
-    <%= form.text_field :metrics %>
-  </div>
-
-  <div class="field">
-    <%= form.label :file %>
-    <%= form.file_field :file %>
-  </div>
+  <% unless dataset.persisted? %>
+    <!-- Code only for #new view -->
+    <div class="field">
+      <%= form.label :file %>
+      <%= form.file_field :file %>
+    </div>
+  <% end %>
 
   <div>
     <%= form.submit %>
   </div>
-
-  <!-- Keep only one instance of the "Back to datasets" link -->
-  <%= link_to 'Back to datasets', datasets_path %>
 <% end %>
