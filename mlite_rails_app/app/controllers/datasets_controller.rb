@@ -22,7 +22,7 @@ class DatasetsController < ApplicationController
 
   # POST /datasets or /datasets.json
   def create
-    @dataset = current_user.datasets.new(dataset_params)
+    @dataset = current_user.datasets.new(dataset_params.merge(dataset_type: dataset_params[:dataset_type] || "csv"))
 
     respond_to do |format|
       if @dataset.save

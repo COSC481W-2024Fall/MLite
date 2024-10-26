@@ -5,6 +5,11 @@ require "minitest/mock"
 
 
 class DatasetTest < ActiveSupport::TestCase
+  setup do
+    @user = users(:one)
+  end
+
+
   test "should be valid with valid attributes" do
     dataset = Dataset.new(
       name: "Test Dataset",
@@ -14,7 +19,8 @@ class DatasetTest < ActiveSupport::TestCase
       size: 100.megabytes,
       columns: 10,
       n_rows: 1000,
-      metrics: {}
+      metrics: {},
+      user_id: @user.id
     )
     assert dataset.valid?
   end
@@ -28,7 +34,8 @@ class DatasetTest < ActiveSupport::TestCase
       size: 100.megabytes,
       columns: 10,
       n_rows: 1000,
-      metrics: {}
+      metrics: {},
+      user_id: @user.id
     )
     assert_not dataset.valid?
   end
@@ -42,13 +49,14 @@ class DatasetTest < ActiveSupport::TestCase
       size: 100.megabytes,
       columns: 10,
       n_rows: 1000,
-      metrics: {}
+      metrics: {},
+      user_id: @user.id
     )
     assert_not dataset.valid?
   end
 
   test "should not be valid if the file size is larger than 500MB" do
-    dataset = Dataset.new(name: "Test Dataset", dataset_type: "csv")
+    dataset = Dataset.new(name: "Test Dataset", dataset_type: "csv", user_id: @user.id)
 
     file_mock = Minitest::Mock.new
     file_mock.expect :attached?, true
@@ -62,7 +70,7 @@ class DatasetTest < ActiveSupport::TestCase
   end
 
   test "should be valid if the file size is less than 500MB" do
-    dataset = Dataset.new(name: "Test Dataset", dataset_type: "csv")
+    dataset = Dataset.new(name: "Test Dataset", dataset_type: "csv", user_id: @user.id)
 
     file_mock = Minitest::Mock.new
     file_mock.expect :attached?, true
@@ -83,7 +91,8 @@ class DatasetTest < ActiveSupport::TestCase
       size: 250.megabytes,
       columns: 5,
       n_rows: 500,
-      metrics: {}
+      metrics: {},
+      user_id: @user.id
     )
     assert dataset.persisted?
   end
