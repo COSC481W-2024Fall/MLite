@@ -2,18 +2,22 @@ require "test_helper"
 require "minitest/mock"
 
 class ModelTest < ActiveSupport::TestCase
+  setup do
+    @dataset = datasets(:one)
+  end
+
   test "should be valid with valid attributes" do
-    model = Model.new(name: "Test Model", model_type: "decision_tree")
+    model = Model.new(name: "Test Model", model_type: "decision_tree", dataset_id: @dataset.id)
     assert model.valid?
   end
 
   test "should not be valid without a name" do
-    model = Model.new(name: nil, model_type: "decision_tree")
+    model = Model.new(name: nil, model_type: "decision_tree", dataset_id: @dataset.id)
     assert_not model.valid?
   end
 
   test "should not be valid if the file size is larger than 500MB" do
-    model = Model.new(name: "Test Model", model_type: "decision_tree")
+    model = Model.new(name: "Test Model", model_type: "decision_tree", dataset_id: @dataset.id)
 
     # Using Minitest::Mock to mock the attached file's blob and file size
     blob_mock = Minitest::Mock.new
@@ -31,7 +35,7 @@ class ModelTest < ActiveSupport::TestCase
   end
 
   test "should be valid if the file size is less than 500MB" do
-    model = Model.new(name: "Test Model", model_type: "decision_tree")
+    model = Model.new(name: "Test Model", model_type: "decision_tree", dataset_id: @dataset.id)
 
     # Using Minitest::Mock to mock the attached file's blob and file size
     blob_mock = Minitest::Mock.new
@@ -48,7 +52,7 @@ class ModelTest < ActiveSupport::TestCase
   end
 
   test "should change status to deployed" do
-    model = Model.create(name: "Test Model", model_type: "decision_tree", status: "training")
+    model = Model.create(name: "Test Model", model_type: "decision_tree", status: "training", dataset_id: @dataset.id)
     model.update(status: "deployed")
     assert_equal "deployed", model.status
   end

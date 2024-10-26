@@ -1,8 +1,12 @@
 require "test_helper"
 
 class ModelsControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @model = models(:one)
+    @dataset = @model.dataset
+    sign_in @dataset.user
   end
 
   test "should get index" do
@@ -17,7 +21,7 @@ class ModelsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create model" do
     assert_difference("Model.count") do
-      post models_url, params: { model: { description: @model.description, features: @model.features, hyperparams: @model.hyperparams, labels: @model.labels, metrics: @model.metrics, model_type: @model.model_type, name: @model.name, size: @model.size, status: @model.status, training_job: @model.training_job } }
+      post models_url, params: { model: { description: @model.description, name: @model.name, dataset_id: @dataset.id } }
     end
 
     assert_redirected_to model_url(Model.last)
@@ -34,7 +38,7 @@ class ModelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update model" do
-    patch model_url(@model), params: { model: { description: @model.description, features: @model.features, hyperparams: @model.hyperparams, labels: @model.labels, metrics: @model.metrics, model_type: @model.model_type, name: @model.name, size: @model.size, status: @model.status, training_job: @model.training_job } }
+    patch model_url(@model), params: { model: { description: @model.description, name: @model.name } }
     assert_redirected_to model_url(@model)
   end
 
