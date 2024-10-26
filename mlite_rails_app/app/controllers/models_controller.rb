@@ -33,28 +33,20 @@ class ModelsController < ApplicationController
   def create
     @model = Model.new(model_params)
 
-    respond_to do |format|
-      if @model.save
-        format.html { redirect_to model_url(@model), notice: "Model was successfully created." }
-        format.json { render :show, status: :created, location: @model }
-      else
-        @datasets = current_user.datasets
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @model.errors, status: :unprocessable_entity }
-      end
+    if @model.save
+      redirect_to model_path(@model), notice: "Model was successfully created."
+    else
+      @datasets = current_user.datasets
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /models/1 or /models/1.json
   def update
-    respond_to do |format|
-      if @model.update(model_params)
-        format.html { redirect_to model_url(@model), notice: "Model was successfully updated." }
-        format.json { render :show, status: :ok, location: @model }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @model.errors, status: :unprocessable_entity }
-      end
+    if @model.update(model_params)
+      redirect_to model_path(@model), notice: "Model was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -62,10 +54,7 @@ class ModelsController < ApplicationController
   def destroy
     @model.destroy!
 
-    respond_to do |format|
-      format.html { redirect_to models_url, notice: "Model was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to models_path, notice: "Model was successfully destroyed."
   end
 
   private

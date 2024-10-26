@@ -24,27 +24,19 @@ class DatasetsController < ApplicationController
   def create
     @dataset = current_user.datasets.new(dataset_params.merge(dataset_type: dataset_params[:dataset_type] || "csv"))
 
-    respond_to do |format|
-      if @dataset.save
-        format.html { redirect_to @dataset, notice: "Dataset was successfully created." }
-        format.json { render :show, status: :created, location: @dataset }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
-      end
+    if @dataset.save
+      redirect_to @dataset, notice: "Dataset was successfully created."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /datasets/1 or /datasets/1.json
   def update
-    respond_to do |format|
-      if @dataset.update(dataset_params)
-        format.html { redirect_to @dataset, notice: "Dataset was successfully updated." }
-        format.json { render :show, status: :ok, location: @dataset }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @dataset.errors, status: :unprocessable_entity }
-      end
+    if @dataset.update(dataset_params)
+      redirect_to @dataset, notice: "Dataset was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -52,10 +44,7 @@ class DatasetsController < ApplicationController
   def destroy
     @dataset.destroy!
 
-    respond_to do |format|
-      format.html { redirect_to datasets_path, status: :see_other, notice: "Dataset was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to datasets_path, status: :see_other, notice: "Dataset was successfully destroyed." 
   end
 
   private

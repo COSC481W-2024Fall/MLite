@@ -39,28 +39,20 @@ class DeploymentsController < ApplicationController
       model_id: deployment_params[:model_id]
     )
 
-    respond_to do |format|
-      if @deployment.save
-        format.html { redirect_to deployment_url(@deployment), notice: "Deployment was successfully created." }
-        format.json { render :show, status: :created, location: @deployment }
-      else
-        @models = current_user.models
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @deployment.errors, status: :unprocessable_entity }
-      end
+    if @deployment.save
+      redirect_to deployment_path(@deployment), notice: "Deployment was successfully created."
+    else
+      @models = current_user.models
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /deployments/1 or /deployments/1.json
   def update
-    respond_to do |format|
-      if @deployment.update(deployment_params)
-        format.html { redirect_to deployment_url(@deployment), notice: "Deployment was successfully updated." }
-        format.json { render :show, status: :ok, location: @deployment }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @deployment.errors, status: :unprocessable_entity }
-      end
+    if @deployment.update(deployment_params)
+      redirect_to deployment_path(@deployment), notice: "Deployment was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -68,10 +60,7 @@ class DeploymentsController < ApplicationController
   def destroy
     @deployment.destroy
 
-    respond_to do |format|
-      format.html { redirect_to deployments_url, notice: "Deployment was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to deployments_path, notice: "Deployment was successfully destroyed."
   end
 
   private
