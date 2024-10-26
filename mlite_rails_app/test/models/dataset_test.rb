@@ -9,7 +9,6 @@ class DatasetTest < ActiveSupport::TestCase
     @user = users(:one)
   end
 
-
   test "should be valid with valid attributes" do
     dataset = Dataset.new(
       name: "Test Dataset",
