@@ -1,0 +1,37 @@
+<h1>Run Inference for Deployment</h1>
+
+<!-- Inference Form -->
+<%= form_with(url: deployment_inference_path(@deployment), method: :post, local: true) do |f| %>
+  <div>
+    <%= f.label :dummy_field_1, "Age" %>
+    <%= f.text_field :dummy_field_1, required: true %>
+  </div>
+
+  <div>
+    <%= f.label :dummy_field_2, "Height" %>
+    <%= f.text_field :dummy_field_2, required: true %>
+  </div>
+
+  <div>
+    <%= f.label :dummy_field_3, "Do you have a car" %>
+    <%= f.select :dummy_field_3, options_for_select([['yes', "yes"], ['no', "no"]]), required: true %>
+  </div>
+
+  <div>
+    <%= f.label :dummy_field_4, "Color" %>
+    <%= f.select :dummy_field_4, options_for_select([['red', "red"], ['blue', "blue"], ['green', "green"]]), required: true %>
+  </div>
+
+  <div>
+    <%= f.submit "Submit", class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+<!-- Show inference result if it exists -->
+<% if @inference_result.present? %>
+  <h2>Inference Result</h2>
+  <p><%= @inference_result %></p>
+<% end %>
+
+<!-- Link to go back to the index page -->
+<%= link_to 'Back to Deployments', deployments_path, class: 'btn btn-secondary' %>

@@ -1,35 +1,35 @@
 class DeploymentsController < ApplicationController
   before_action :authenticate_user!, unless: -> { Rails.env.test? }
-  before_action :set_deployment, only: %i[ show edit update destroy ]
+  before_action :set_deployment, only: %i[ show edit update destroy inference do_inference ]
 
   # GET /deployments or /deployments.json
   def index
     @deployments = Deployment.all
+    @inference_result = nil # Ensure @inference_result is nil when on index
   end
 
   # GET /deployments/1 or /deployments/1.json
   def show
+    @inference_result = nil # Ensure @inference_result is nil on show page
   end
 
   # GET /deployments/new
   def new
     @deployment = Deployment.new
+    @inference_result = nil # Ensure @inference_result is nil on new page
   end
 
   # GET /deployments/1/edit
   def edit
+    @inference_result = nil # Ensure @inference_result is nil on edit page
   end
 
   # POST /deployments or /deployments.json
   def create
-    # Manually set name from form input
     name = deployment_params[:name]
-
-    # Generate default values for status and deployment_link
     status = "pending" # Set default status
     deployment_link = "https://deployments.example.com/#{name.parameterize}" # Generate deployment link
 
-    # Create new Deployment object with the generated values
     @deployment = Deployment.new(
       name: name,
       status: status,
@@ -68,6 +68,25 @@ class DeploymentsController < ApplicationController
       format.html { redirect_to deployments_url, notice: "Deployment was successfully destroyed." }
       format.json { head :no_content }
     end
+  end
+
+  # GET /deployments/:id/inference
+  def inference
+    @inference_result = nil # Ensure the form starts fresh without an old inference result
+  end
+
+  # POST /deployments/:id/inference
+  def do_inference
+    dummy_field_1 = params[:dummy_field_1]
+    dummy_field_2 = params[:dummy_field_2]
+    dummy_field_3 = params[:dummy_field_3]
+    dummy_field_4 = params[:dummy_field_4]
+
+    # Generate a dummy response message
+    @inference_result = "Based on your input of #{dummy_field_1}, #{dummy_field_2}, #{dummy_field_3}, and  #{dummy_field_4}, here's a dummy result."
+
+    # Render the inference page with the result
+    render :inference
   end
 
   private
