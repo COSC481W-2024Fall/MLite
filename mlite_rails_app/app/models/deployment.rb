@@ -1,5 +1,5 @@
 class Deployment < ApplicationRecord
-  belongs_to :model, optional: true
+  belongs_to :model
 
   validates :name, presence: true
   validates :status, presence: true

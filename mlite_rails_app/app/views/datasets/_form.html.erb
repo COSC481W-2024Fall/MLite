@@ -20,10 +20,13 @@
     <%= form.text_area :description %>
   </div>
 
-  <div class="field">
-    <%= form.label :file %>
-    <%= form.file_field :file %>
-  </div>
+  <% unless dataset.persisted? %>
+    <!-- Code only for #new view -->
+    <div class="field">
+      <%= form.label :file %>
+      <%= form.file_field :file %>
+    </div>
+  <% end %>
 
   <div>
     <%= form.submit %>

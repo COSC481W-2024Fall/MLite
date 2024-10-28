@@ -2,8 +2,11 @@
 require "application_system_test_case"
 
 class DatasetsTest < ApplicationSystemTestCase
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @dataset = datasets(:one)
+    sign_in @dataset.user
   end
 
   test "visiting the index" do
@@ -17,10 +20,6 @@ class DatasetsTest < ApplicationSystemTestCase
 
     fill_in "Name", with: @dataset.name
     fill_in "Description", with: @dataset.description
-    fill_in "Dataset type", with: @dataset.dataset_type
-    fill_in "Size", with: @dataset.size
-    fill_in "Columns", with: @dataset.columns
-    fill_in "N rows", with: @dataset.n_rows
     attach_file "File", Rails.root.join("test/fixtures/files/sample.csv")
     click_on "Create Dataset"
 
@@ -34,11 +33,6 @@ class DatasetsTest < ApplicationSystemTestCase
 
     fill_in "Name", with: @dataset.name
     fill_in "Description", with: @dataset.description
-    fill_in "Dataset type", with: @dataset.dataset_type
-    fill_in "Size", with: @dataset.size
-    fill_in "Columns", with: @dataset.columns
-    fill_in "N rows", with: @dataset.n_rows
-    attach_file "File", Rails.root.join("test/fixtures/files/sample.csv")
     click_on "Update Dataset"
 
     assert_text "Dataset was successfully updated"

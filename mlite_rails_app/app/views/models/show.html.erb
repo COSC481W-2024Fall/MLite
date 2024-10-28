@@ -5,6 +5,7 @@
 <div>
   <%= link_to "Edit this model", edit_model_path(@model) %> |
   <%= link_to "Back to models", models_path %>
-  <%= button_to 'Deploy Model', deploy_model_path(@model), method: :post %>
+  <br>
+  <%= link_to 'Deploy Model', new_deployment_path(deployment: {model_id: @model.id}) %>
   <%= button_to "Destroy this model", @model, method: :delete %>
 </div>
