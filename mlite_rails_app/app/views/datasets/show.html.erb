@@ -5,28 +5,8 @@
 <div>
   <%= link_to "Edit this dataset", edit_dataset_path(@dataset) %> |
   <%= link_to "Back to datasets", datasets_path %>
-
+  <br>
+  <%= link_to 'Train a Model', new_model_path(model: {dataset_id: @dataset.id}) %>
   <%= button_to "Destroy this dataset", @dataset, method: :delete %>
 </div>
-<p>
-  <strong>Name:</strong>
-  <%= @dataset.name %>
-</p>
-
-<p>
-  <strong>Description:</strong>
-  <%= @dataset.description %>
-</p>
-
-<p>
-  <strong>File size:</strong>
-  <%= number_to_human_size(@dataset.file.byte_size) if @dataset.file.attached? %>
-</p>
-
-<% if @dataset.file.attached? %>
-  <p>
-    <strong>Download file:</strong>
-    <%= link_to 'Download', rails_blob_path(@dataset.file, disposition: "attachment") %>
-  </p>
-<% end %>
 

@@ -5,6 +5,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :datasets, dependent: :destroy
+  has_many :models, through: :datasets
+  has_many :deployments, through: :models
 
   validate :email_must_be_emich
 

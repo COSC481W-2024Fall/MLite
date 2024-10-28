@@ -34,4 +34,10 @@
     <%= dataset.metrics %>
   </p>
 
+  <% if dataset.file.attached? %>
+    <p>
+      <strong>Download file:</strong>
+      <%= link_to 'Download', rails_blob_path(dataset.file, disposition: "attachment") %>
+    </p>
+  <% end %>
 </div>

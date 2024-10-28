@@ -1,8 +1,13 @@
 require "application_system_test_case"
 
 class DeploymentsTest < ApplicationSystemTestCase
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @deployment = deployments(:one)
+    @model = @deployment.model
+    @dataset = @model.dataset
+    sign_in @dataset.user
   end
 
   test "visiting the index" do
@@ -14,9 +19,7 @@ class DeploymentsTest < ApplicationSystemTestCase
     visit deployments_url
     click_on "New deployment"
 
-    fill_in "Deployment link", with: @deployment.deployment_link
     fill_in "Name", with: @deployment.name
-    fill_in "Status", with: @deployment.status
     click_on "Create Deployment"
 
     assert_text "Deployment was successfully created"
@@ -27,9 +30,7 @@ class DeploymentsTest < ApplicationSystemTestCase
     visit deployment_url(@deployment)
     click_on "Edit this deployment", match: :first
 
-    fill_in "Deployment link", with: @deployment.deployment_link
     fill_in "Name", with: @deployment.name
-    fill_in "Status", with: @deployment.status
     click_on "Update Deployment"
 
     assert_text "Deployment was successfully updated"
