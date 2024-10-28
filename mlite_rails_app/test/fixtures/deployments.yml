@@ -4,8 +4,10 @@ one:
   name: MyString
   status: MyString
   deployment_link: MyString
+  model: one
 
 two:
   name: MyString
   status: MyString
   deployment_link: MyString
+  model: two

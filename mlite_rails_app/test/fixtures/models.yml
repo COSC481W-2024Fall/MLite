@@ -10,7 +10,8 @@ one:
   hyperparams: 
   status: MyString
   training_job: MyString
-  metrics: 
+  metrics:
+  dataset: one
 
 two:
   name: MyString
@@ -22,4 +23,5 @@ two:
   hyperparams: 
   status: MyString
   training_job: MyString
-  metrics: 
+  metrics:
+  dataset: two

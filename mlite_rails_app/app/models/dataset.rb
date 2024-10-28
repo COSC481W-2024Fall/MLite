@@ -1,6 +1,6 @@
 class Dataset < ApplicationRecord
   has_one_attached :file
-  belongs_to :user, optional: true
+  belongs_to :user
   has_many :models, dependent: :destroy
   # add validation for presence for name and dataet_tyop
 

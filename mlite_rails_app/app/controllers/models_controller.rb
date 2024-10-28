@@ -4,7 +4,7 @@ class ModelsController < ApplicationController
 
   # GET /models or /models.json
   def index
-    @models = Model.all
+    @models = current_user.models.all
   end
 
   # GET /models/1 or /models/1.json
@@ -21,37 +21,32 @@ class ModelsController < ApplicationController
   # GET /models/new
   def new
     @model = Model.new
+    @datasets = current_user.datasets
   end
 
   # GET /models/1/edit
   def edit
+    @datasets = current_user.datasets
   end
 
   # POST /models or /models.json
   def create
     @model = Model.new(model_params)
 
-    respond_to do |format|
-      if @model.save
-        format.html { redirect_to model_url(@model), notice: "Model was successfully created." }
-        format.json { render :show, status: :created, location: @model }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @model.errors, status: :unprocessable_entity }
-      end
+    if @model.save
+      redirect_to model_path(@model), notice: "Model was successfully created."
+    else
+      @datasets = current_user.datasets
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /models/1 or /models/1.json
   def update
-    respond_to do |format|
-      if @model.update(model_params)
-        format.html { redirect_to model_url(@model), notice: "Model was successfully updated." }
-        format.json { render :show, status: :ok, location: @model }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @model.errors, status: :unprocessable_entity }
-      end
+    if @model.update(model_params)
+      redirect_to model_path(@model), notice: "Model was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -59,20 +54,18 @@ class ModelsController < ApplicationController
   def destroy
     @model.destroy!
 
-    respond_to do |format|
-      format.html { redirect_to models_url, notice: "Model was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to models_path, notice: "Model was successfully destroyed."
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_model
-      @model = Model.find(params[:id])
+      @model = current_user.models.find(params[:id])
+      @dataset = @model.dataset
     end
 
     # Only allow a list of trusted parameters through.
     def model_params
-      params.require(:model).permit(:name, :description, :size, :features, :labels, :model_type, :hyperparams, :status, :training_job, :metrics, :file)
+      params.require(:model).permit(:name, :description, :size, :features, :labels, :model_type, :hyperparams, :status, :training_job, :metrics, :file, :dataset_id)
     end
 end

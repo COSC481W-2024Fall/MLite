@@ -7,7 +7,8 @@ one:
   columns: 1
   n_rows: 1
   dataset_type: MyString
-  metrics: 
+  metrics:
+  user: one
 
 two:
   name: MyString
@@ -16,4 +17,5 @@ two:
   columns: 1
   n_rows: 1
   dataset_type: MyString
-  metrics: 
+  metrics:
+  user: one

@@ -12,6 +12,11 @@
   <% end %>
 
   <div>
+    <%= form.label :model_id, "Select Model" %>
+    <%= form.select :model_id, options_from_collection_for_select(@models, :id, :name, params.dig(:deployment, :model_id)) %>
+  </div>
+
+  <div>
     <%= form.label :name, style: "display: block" %>
     <%= form.text_field :name %>
   </div>

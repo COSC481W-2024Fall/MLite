@@ -1,8 +1,12 @@
 require "application_system_test_case"
 
 class ModelsTest < ApplicationSystemTestCase
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @model = models(:one)
+    @dataset = @model.dataset
+    sign_in @dataset.user
   end
 
   test "visiting the index" do
@@ -15,15 +19,7 @@ class ModelsTest < ApplicationSystemTestCase
     click_on "New model"
 
     fill_in "Description", with: @model.description
-    fill_in "Features", with: @model.features
-    fill_in "Hyperparams", with: @model.hyperparams
-    fill_in "Labels", with: @model.labels
-    fill_in "Metrics", with: @model.metrics
-    fill_in "Model type", with: @model.model_type
     fill_in "Name", with: @model.name
-    fill_in "Size", with: @model.size
-    fill_in "Status", with: @model.status
-    fill_in "Training job", with: @model.training_job
     click_on "Create Model"
 
     assert_text "Model was successfully created"
@@ -35,15 +31,7 @@ class ModelsTest < ApplicationSystemTestCase
     click_on "Edit this model", match: :first
 
     fill_in "Description", with: @model.description
-    fill_in "Features", with: @model.features
-    fill_in "Hyperparams", with: @model.hyperparams
-    fill_in "Labels", with: @model.labels
-    fill_in "Metrics", with: @model.metrics
-    fill_in "Model type", with: @model.model_type
     fill_in "Name", with: @model.name
-    fill_in "Size", with: @model.size
-    fill_in "Status", with: @model.status
-    fill_in "Training job", with: @model.training_job
     click_on "Update Model"
 
     assert_text "Model was successfully updated"
