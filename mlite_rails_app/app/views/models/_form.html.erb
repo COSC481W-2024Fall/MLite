@@ -11,22 +11,75 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :dataset_id, "Select Dataset" %>
-    <%= form.select :dataset_id, options_from_collection_for_select(@datasets, :id, :name, params.dig(:model, :dataset_id)) %>
-  </div>
+  <% unless @model.persisted? %>
+    <div>
+      <%= form.label :dataset_id, "Select Dataset" %>
+      <%= form.select :dataset_id,
+                      options_from_collection_for_select(@datasets, :id, :name, @dataset&.id),
+                      (@dataset.nil? ? { include_blank: "Select a Dataset" } : {}),
+                      { onchange: 'submitWithGetOnDatasetSelect(this)' } %>
+    </div>
 
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
-  </div>
+    <script>
+        function submitWithGetOnDatasetSelect(selectElement) {
+            window.location.href = '/models/new?dataset_id=' + selectElement.value ;
+        }
+    </script>
 
-  <div>
-    <%= form.label :description, style: "display: block" %>
-    <%= form.text_area :description %>
-  </div>
+    <% if @dataset %>
+      <div>
+        <%= label_tag :selected_column, "Select a Target Column: " %>
+        <%= select_tag :selected_column,
+                       options_for_select(@columns, @selected_column),
+                       { include_blank: @selected_column.nil? ? "Select a Column" : nil, onchange: 'submitWithGetOnColumnSelect(this)' } %>
+      </div>
 
-  <div>
-    <%= form.submit %>
-  </div>
+      <script>
+          function submitWithGetOnColumnSelect(selectElement) {
+              window.location.href = '/models/new?dataset_id=<%= @dataset.id %>&selected_column=' + selectElement.value ;
+          }
+      </script>
+    <% end %>
+
+    <% if @selected_column %>
+      <div>
+        <%= form.label :name, style: "display: block" %>
+        <%= form.text_field :name %>
+      </div>
+
+      <div>
+        <%= form.label :description, style: "display: block" %>
+        <%= form.text_area :description %>
+      </div>
+
+      <% @recommended_models.each_with_index do |model, index| %>
+        <div>
+          <%= form.radio_button :selected_model, index, id: "recommended_model_#{index}" %>
+          <%= form.label "recommended_model_#{index}", "#{model[:model_type].humanize} (Hyperparams: #{model[:hyperparams].to_json})" %>
+
+          <!-- Hidden fields to pass the model details -->
+          <%= form.hidden_field :model_type, value: model[:model_type], name: "recommended_models[#{index}][model_type]" %>
+          <%= form.hidden_field :hyperparams, value: model[:hyperparams].to_json, name: "recommended_models[#{index}][hyperparams]" %>
+        </div>
+      <% end %>
+
+      <div>
+        <%= form.submit %>
+      </div>
+    <% end %>
+  <% else %>
+    <div>
+      <%= form.label :name, style: "display: block" %>
+      <%= form.text_field :name %>
+    </div>
+
+    <div>
+      <%= form.label :description, style: "display: block" %>
+      <%= form.text_area :description %>
+    </div>
+
+    <div>
+      <%= form.submit %>
+    </div>
+  <% end %>
 <% end %>
