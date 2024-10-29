@@ -1,3 +1,4 @@
+require 'csv'
 class DatasetsController < ApplicationController
   before_action :authenticate_user!, unless: -> { Rails.env.test? }
   before_action :set_dataset, only: %i[show edit update destroy]
