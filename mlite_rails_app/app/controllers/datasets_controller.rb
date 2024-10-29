@@ -94,7 +94,6 @@ class DatasetsController < ApplicationController
 
 
     # Set dataset metadata
-    dataset.name = File.basename(dataset.file.filename.to_s, ".*")
     dataset.size = csv_content.bytesize
     dataset.n_rows = csv_data.size
     dataset.columns = columns_data
