@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[3]:
+# In[1]:
 
 
 import torch
@@ -13,6 +13,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import numpy as np
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
 
 
 # In[ ]:
@@ -21,7 +23,7 @@ import numpy as np
 
 
 
-# In[6]:
+# In[40]:
 
 
 class MLAPI:
@@ -30,6 +32,7 @@ class MLAPI:
     dataset_name = None
     dataset = None
     model = None
+    accuracy = 0.0
     
     def __init__(self, checkpoint=""):
         try:
@@ -46,7 +49,39 @@ class MLAPI:
         except:
             print("No GPU available in system!")
         
+    def __str__(self):
+        try:
+            return self.accuracy
+        except:
+            return 0
 
+    def one_hot_encode(self, inplace=True, dataset=None, cutoff = 10, columns=None):
+        # TODO: Fix this
+        
+        # do a one hot encode of the current dataset and then return 
+        # the new column names alongside the new dataframe
+        print("TESTING")
+        try:
+            print("Columns: ")
+            print ([self.dataset[col].unique().tolist() for col in self.dataset.columns])
+            # one_hot_df = pd.get_dummies(self.dataset)
+        
+            # new_columns = one_hot_df.columns.difference(self.dataset.columns).tolist()
+            
+        # catch when df1 is None
+        except AttributeError as e:
+            print(e)
+            return None, None
+        # catch when it hasn't even been defined
+        except NameError as e:
+            print(e)
+            return None, None
+            
+        if inplace:
+            self.dataset = one_hot_df
+            
+        return one_hot_df, new_columns
+    
     def set_local_csv_dataset(self, dataset=None, encoding=None):
         self.dataset_name = dataset
         if dataset == None:
@@ -55,6 +90,10 @@ class MLAPI:
             irisdf = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
                                  columns= iris['feature_names'] + ['target'])
             self.dataset = irisdf
+            
+        if dataset == "social_network":
+            self.dataset = pd.read_csv("../Data/Social_Network_Ads.csv")
+            
         else:
             try:
                 if encoding != None:
@@ -63,11 +102,24 @@ class MLAPI:
                     self.dataset = pd.read_csv(self.dataset_name)
             except:
                 print("Not CSV")
+                return False
+        return True
 
     def set_local_json_dataset(self, dataset):
         pass
 
-    def logistic_regression(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100):
+    def recommed_model(self, dataset, columns, features):
+        # should probably mostly rely upon user input to recommend a model
+        # if data is linear and wants easy explanation -> linear
+        # linear data + categorical data -> logistic regression
+        # we can get linearity from R^2 score?
+        # high dimensional data + easy explanation or large amount of entries -> decision tree
+        # high dimensional data + higher accuracy + fewer entries -> SVM
+        # SVM takes longer to train than most trees
+        # TODO: add naive bayes algorithm to class
+        pass
+        
+    def logistic_regression(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
         df_encoded = pd.get_dummies(self.dataset, drop_first=True)
         y = self.dataset[label]
         if columns == None:
@@ -84,13 +136,15 @@ class MLAPI:
         X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
 
-        self.model = LogisticRegression(max_iter=max_epochs)
+        self.model = LogisticRegression(max_iter=max_epochs, verbose = verbose)
         self.model.fit(X_train, y_train)
-        accuracy = self.model.score(X_test, y_test)
-        print(f"Model Accuracy: {accuracy}")
+        self.accuracy = self.model.score(X_test, y_test)
+        print(f"Model Accuracy: {self.accuracy}")
         return self.model
 
-    def linear_regression(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100):
+    def linear_regression(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+        # worth noting that the linear regression method via sklearn is very sparsely implemented
+        # takes almost no method arguments
         df_encoded = pd.get_dummies(self.dataset, drop_first=True)
 
         #TODO: get columns from df_encoded if categorical data that is one hot encoded
@@ -112,15 +166,32 @@ class MLAPI:
 
         self.model = LinearRegression()
         self.model.fit(X_train, y_train)
-        accuracy = self.model.score(X_test, y_test)
-        print(f"Model Accuracy: {accuracy}")
+        self.accuracy = self.model.score(X_test, y_test)
+        print(f"Model Accuracy: {self.accuracy}")
         return self.model
 
-    def svm(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100):
-        # TODO: METHOD STUB
-        pass
+    def svm(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+        y = self.dataset[label]
+        X_columns = None
+        if columns == None:
+            #assume all other columns and set X_columns to all features not label
+            X_columns = [col for col in self.dataset.columns if label not in col]
+        else:
+            X_columns = columns
+            
+        X = self.dataset[X_columns]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size, random_state = random_state)
+        sc = StandardScaler()
+        X_train = sc.fit_transform(X_train)
+        X_test = sc.transform(X_test)
+        self.model = SVC(kernel = 'rbf', random_state = random_state, verbose = verbose)
+        self.model.fit(X_train, y_train)
+        y_pred = self.model.predict(X_test)
+        self.accuracy = accuracy_score(y_test,y_pred)
+        print(f"Model Accuracy: {self.accuracy}")
+        return self.model
 
-    def decision_tree(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100):
+    def decision_tree(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
         y = self.dataset[label]
         if columns == None:
             #assume all other columns and set X_columns to all features not label
@@ -133,34 +204,37 @@ class MLAPI:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
 
         scaler = StandardScaler()
-        X_train_scaled = scaler.fit_transform(X_train)
-        X_test_scaled = scaler.transform(X_test)
-        
+        try:
+            X_train_scaled = scaler.fit_transform(X_train)
+        except:
+            X_train_scaled = X_train
+
+        try:
+            X_test_scaled = scaler.transform(X_test)
+        except:
+            X_test_scaled = X_test
+
+        #TODO: Add verbosity to decision tree classifier?
         self.model = DecisionTreeClassifier(random_state = random_state)
         self.model.fit(X_train, y_train)
         y_pred = self.model.predict(X_test)
-        accuracy = self.model.score(X_test, y_test)
-        print(f"Decision Tree Model Accuracy: {accuracy}")
+        self.accuracy = self.model.score(X_test, y_test)
+        print(f"Model Accuracy: {self.accuracy}")
         return self.model
+
                 
 
 
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[1]:
+# In[48]:
 
 
 get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
+
+
+# In[24]:
+
+
+
 
 
 # In[ ]:
