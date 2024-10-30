@@ -75,8 +75,14 @@ class DeploymentsController < ApplicationController
     dummy_field_3 = params[:dummy_field_3]
     dummy_field_4 = params[:dummy_field_4]
 
+    # Validate that required fields are present
+    if dummy_field_1.blank? || dummy_field_2.blank? || dummy_field_3.blank? || dummy_field_4.blank?
+      flash.now[:alert] = "All fields must be filled out."
+      @inference_result = nil # Ensure no result is shown
+      render :inference and return
+    end
     # Generate a dummy response message
-    @inference_result = "Based on your input of #{dummy_field_1}, #{dummy_field_2}, #{dummy_field_3}, and  #{dummy_field_4}, here's a dummy result."
+    @inference_result = "Based on your input of #{dummy_field_1}, #{dummy_field_2}, #{dummy_field_3}, and #{dummy_field_4}, here's a dummy result."
 
     # Render the inference page with the result
     render :inference

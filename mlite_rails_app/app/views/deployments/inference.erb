@@ -4,17 +4,17 @@
 <%= form_with(url: deployment_inference_path(@deployment), method: :post, local: true) do |f| %>
   <div>
     <%= f.label :dummy_field_1, "Age" %>
-    <%= f.text_field :dummy_field_1, required: true %>
+    <%= f.number_field :dummy_field_1, required: true, min: 0, step: 1 %>
   </div>
 
   <div>
     <%= f.label :dummy_field_2, "Height" %>
-    <%= f.text_field :dummy_field_2, required: true %>
+    <%= f.number_field :dummy_field_2, required: true, min: 0, step: 0.01 %>
   </div>
 
   <div>
     <%= f.label :dummy_field_3, "Do you have a car" %>
-    <%= f.select :dummy_field_3, options_for_select([['yes', "yes"], ['no', "no"]]), required: true %>
+    <%= f.check_box :dummy_field_3, {}, "yes", "no" %>
   </div>
 
   <div>
