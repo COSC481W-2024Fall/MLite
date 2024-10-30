@@ -12,6 +12,8 @@ class User < ApplicationRecord
 
   private
 
+  # has_one_attached :profile_picture
+
   def email_must_be_emich
     if email.present? && !email.end_with?('@emich.edu')
       errors.add(:email, 'must be an emich.edu email')
