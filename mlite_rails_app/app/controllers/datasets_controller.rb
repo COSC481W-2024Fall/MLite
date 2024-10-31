@@ -125,9 +125,6 @@ class DatasetsController < ApplicationController
 
   # Helper method to detect if a column is categorical
   def categorical?(values)
-    # Define a threshold for determining categorical data
-    threshold = 20  # Adjust this value as needed
-
     unique_values = values.uniq
 
     # A column is categorical if it has fewer unique values than the threshold
@@ -139,28 +136,50 @@ class DatasetsController < ApplicationController
   def calculate_metrics(csv_data)
     metrics = {}
 
-    # Loop through each column and process only numeric data (integer or float)
+    # Loop through each column and process numeric or categorical data
     csv_data.headers.each do |column|
       values = csv_data[column].compact
 
-      # Check if the column contains only numeric data (integer or float)
-      next unless numeric_column?(values)
+      if numeric_column?(values)
+        # Numeric data: calculate mean, min, max, median, and std_dev
+        numeric_values = values.map(&:to_f)
+        metrics[column] = {
+          mean: (numeric_values.sum / numeric_values.size).round(2),
+          min: numeric_values.min,
+          max: numeric_values.max,
+          median: numeric_values.sort[numeric_values.size / 2],
+          std_dev: Math.sqrt(numeric_values.sum { |v| (v - numeric_values.sum / numeric_values.size)**2 } / numeric_values.size).round(2)
+        }
+      else
+        if not boolean_column?(values)
+          # Categorical metrics
+          unique_counts = values.tally
+          total_values = values.size
+          mode = unique_counts.max_by { |_, count| count }&.first
 
-      # Convert values to float for metric calculations
-      numeric_values = values.map(&:to_f)
+          # Calculate entropy
+          entropy = -unique_counts.values.map { |count| count.to_f / total_values * Math.log2(count.to_f / total_values) }.sum.round(2)
 
-      # Calculate metrics for the numeric column
-      metrics[column] = {
-        mean: (numeric_values.sum / numeric_values.size).round(2),
-        min: numeric_values.min,
-        max: numeric_values.max,
-        median: numeric_values.sort[numeric_values.size / 2],
-        std_dev: Math.sqrt(numeric_values.sum { |v| (v - numeric_values.sum / numeric_values.size)**2 } / numeric_values.size).round(2)
-      }
+          # Calculate diversity index (Simpson's Diversity Index)
+          diversity_index = 1 - unique_counts.values.map { |count| (count.to_f / total_values)**2 }.sum.round(2)
+
+          metrics[column] = {
+            mode: mode,
+            unique_count: unique_counts.keys.size,
+            frequency_distribution: unique_counts,
+            top_categories: unique_counts.sort_by { |_, count| -count }.first(3).to_h, # Top 3 categories
+            entropy: entropy,
+            diversity_index: diversity_index,
+            category_percentages: unique_counts.transform_values { |count| (count.to_f / total_values * 100).round(2) },
+            least_frequent_category: unique_counts.min_by { |_, count| count }&.first,
+            null_count: csv_data[column].size - total_values # Count of missing/null values
+          }
+          end
+        end
+      end
+
+      metrics
     end
-
-    metrics
-  end
 
   # Helper method to check if a column contains only numeric data (integer or float)
   def numeric_column?(values)
