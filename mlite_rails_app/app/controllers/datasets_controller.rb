@@ -110,7 +110,7 @@ class DatasetsController < ApplicationController
     elsif values.all? { |v| v.match?(/\A-?\d+\z/) }
       "integer"
       # Check if all values are floats
-    elsif values.all? { |v| v.match?(/\A-?\d+\.\d+\z/) }
+    elsif values.all? { |v| v.match?(/\A-?(?:\d+|\.\d+|\d+\.\d+)\z/) }
       "float"
     else
       "categorical"
@@ -183,7 +183,7 @@ class DatasetsController < ApplicationController
 
   # Helper method to check if a column contains only numeric data (integer or float)
   def numeric_column?(values)
-    values.all? { |v| v.match?(/\A-?\d+(\.\d+)?\z/) }
+    values.all? { |v| v.match?(/\A-?(?:\d+|\.\d+|\d+\.\d+)\z/) }
   end
 
 
