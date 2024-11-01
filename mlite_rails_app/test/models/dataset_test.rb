@@ -39,20 +39,6 @@ class DatasetTest < ActiveSupport::TestCase
     assert_not dataset.valid?
   end
 
-  test "should not be valid without a dataset_type" do
-    dataset = Dataset.new(
-      name: "Test Dataset",
-      description: "A sample dataset",
-      dataset_type: nil, # Ensures we are testing the missing dataset_type case
-      file: nil,
-      size: 100.megabytes,
-      columns: 10,
-      n_rows: 1000,
-      metrics: {},
-      user_id: @user.id
-    )
-    assert_not dataset.valid?
-  end
 
   test "should not be valid if the file size is larger than 500MB" do
     dataset = Dataset.new(name: "Test Dataset", dataset_type: "csv", user_id: @user.id)

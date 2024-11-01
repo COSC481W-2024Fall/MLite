@@ -1,0 +1,5 @@
+name,age,score,active
+John,30,85.5,true
+Jane,25,90.0,false
+Doe,22,75.2,true
+Alice,29,95.1,false
