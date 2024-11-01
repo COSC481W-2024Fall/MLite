@@ -11,46 +11,71 @@
 
   <h2>Data Preview</h2>
 
-  <% if @limited %>
-    <p><strong>Note:</strong> Only showing the first 20 and last 10 rows of the dataset.</p>
-  <% end %>
+  <% if @limited %> <!-- Determines if the dataset is over 30 rows, if so then it will display the first 20 rows and last 10 rows separately -->
+    <p><strong>Note:</strong> Showing the first 20 and last 10 rows of the dataset.</p>
 
-  <% if @dataset_content.present? %>
+    <h3>First 20 Rows</h3> <!-- Display of the first 20 rows of the dataset within a table -->
     <table border="1">
       <thead>
       <tr>
-        <% @dataset_content.headers.each do |header| %>
+        <% @first_content.headers.each do |header| %>
           <th><%= header %></th>
         <% end %>
       </tr>
       </thead>
       <tbody>
-      <% @dataset_content.each_with_index do |row, index| %>
-        <% if index > 0 %> <!-- Skip the header row -->
-          <tr>
-            <% row.each do |_, value| %>
-              <td><%= value %></td>
-            <% end %>
-          </tr>
-        <% end %>
-        <% if index == 20 %>
-          <tr>
-            <% row.each do |_, value| %>
-              <td>-</td>
-            <% end %>
-          </tr>
-          <tr>
-            <% row.each do |_, value| %>
-              <td>-</td>
-            <% end %>
-          </tr>
-        <% end %>
+      <% @first_content.each_with_index do |row, index| %>
+        <% next if index == 0 %> <!-- Skip the header row -->
+        <tr>
+          <% row.each do |_, value| %>
+            <td><%= value %></td>
+          <% end %>
+        </tr>
       <% end %>
       </tbody>
     </table>
-  <% else %>
-    <p>No data available in this dataset.</p>
+
+    <h3>Last 10 Rows</h3> <!-- Display of the last 10 rows of the dataset within a table -->
+    <table border="1">
+      <thead>
+      <tr>
+        <% @last_content.headers.each do |header| %>
+          <th><%= header %></th>
+        <% end %>
+      </tr>
+      </thead>
+      <tbody>
+      <% @last_content.each do |row| %>
+        <tr>
+          <% row.each do |_, value| %>
+            <td><%= value %></td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  <% else %> <!-- If the table is at most 30 rows then it will show the whole dataset -->
+    <h3>Full Dataset</h3>
+    <table border="1">
+      <thead>
+      <tr>
+        <% @first_content.headers.each do |header| %>
+          <th><%= header %></th>
+        <% end %>
+      </tr>
+      </thead>
+      <tbody>
+      <% @first_content.each_with_index do |row, index| %>
+        <% next if index == 0 %> <!-- Skip the header row -->
+        <tr>
+          <% row.each do |_, value| %>
+            <td><%= value %></td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
   <% end %>
 
 </div>
-

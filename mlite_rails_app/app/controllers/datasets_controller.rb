@@ -12,7 +12,8 @@ class DatasetsController < ApplicationController
   # GET /datasets/1 or /datasets/1.json
   def show
     result = read_dataset_content(@dataset)
-    @dataset_content = result[:content]
+    @first_content = result[:first_content]
+    @last_content = result[:last_content]
     @limited = result[:limited]
   end
 
@@ -77,17 +78,20 @@ class DatasetsController < ApplicationController
     if parsed_content.size > 30
       # Convert to array to manipulate rows
       rows = parsed_content.to_a
-      limited_rows = rows.first(21) + rows.last(10)
+      first_rows = rows.first(21)
+      last_rows = rows.last(10)
       limited = true
     else
-      limited_rows = parsed_content.to_a
+      first_rows = parsed_content.to_a
+      last_rows = []
       limited = false
     end
 
-    # Create a new CSV::Table with limited rows while preserving the headers
-    dataset_content = CSV::Table.new(limited_rows.map { |row| CSV::Row.new(headers, row) })
+    # Create two new CSV::Tables with limited rows while preserving the headers
+    first_table_content = CSV::Table.new(first_rows.map { |row| CSV::Row.new(headers, row) })
+    last_table_content = CSV::Table.new(last_rows.map { |row| CSV::Row.new(headers, row) })
 
-    { content: dataset_content, limited: limited }
+    { first_content: first_table_content, last_content: last_table_content, limited: limited }
   end
 
 
