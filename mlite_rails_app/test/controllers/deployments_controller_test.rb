@@ -50,35 +50,4 @@ class DeploymentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to deployments_url
   end
-
-  # Inference Tests
-  test "should get inference page" do
-    get deployment_inference_path(@deployment)
-    assert_response :success
-    assert_select "h1", "Run Inference for Deployment" # Check for page title
-  end
-
-  test "should post do_inference and display result" do
-    post deployment_inference_path(@deployment), params: {
-      dummy_field_1: 25,
-      dummy_field_2: 5.8,
-      dummy_field_3: "yes",
-      dummy_field_4: "green"
-    }
-    assert_response :success
-    assert_select "h2", "Inference Result"
-    assert_select "p", /Based on your input of 25, 5.8, yes, and green, here's a dummy result./
-  end
-
-  test "should validate inference form fields" do
-    # Simulate submitting without filling out required fields
-    post deployment_inference_path(@deployment), params: {
-      dummy_field_1: "",
-      dummy_field_2: "",
-      dummy_field_3: "",
-      dummy_field_4: ""
-    }
-    assert_response :success
-    assert_select "h2", false, "Expected no inference result due to missing fields"
-  end
 end

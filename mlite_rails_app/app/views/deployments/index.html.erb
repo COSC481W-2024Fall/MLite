@@ -8,9 +8,7 @@
   <% @deployments.each do |deployment| %>
     <%= render deployment %>
     <p>
-      <%= link_to "Show this deployment", deployment %> |
-      <!-- Link to the inference page for this deployment -->
-      <%= link_to "Run Inference", deployment_inference_path(deployment), class: 'btn btn-primary' %>
+      <%= link_to "Show this deployment", deployment %>
     </p>
   <% end %>
 </div>

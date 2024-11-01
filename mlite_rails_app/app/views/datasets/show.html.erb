@@ -33,6 +33,18 @@
             <% end %>
           </tr>
         <% end %>
+        <% if index == 20 %>
+          <tr>
+            <% row.each do |_, value| %>
+              <td>-</td>
+            <% end %>
+          </tr>
+          <tr>
+            <% row.each do |_, value| %>
+              <td>-</td>
+            <% end %>
+          </tr>
+        <% end %>
       <% end %>
       </tbody>
     </table>
