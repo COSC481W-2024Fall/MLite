@@ -1,7 +1,7 @@
 <p style="color: green"><%= notice %></p>
 
 <%= render @dataset %>
-<% @dataset.metrics.each do |column_name, metric_values| %>
+<% @dataset&.metrics&.each do |column_name, metric_values| %>
   <h4><strong>Column:</strong> <%= column_name.capitalize %></h4>
 
   <ul>
