@@ -1,7 +1,8 @@
 require 'csv'
+
 class DatasetsController < ApplicationController
   before_action :authenticate_user!, unless: -> { Rails.env.test? }
-  before_action :set_dataset, only: %i[show edit update destroy]
+  before_action :set_dataset, only: %i[ show edit update destroy ]
 
   # GET /datasets or /datasets.json
   def index
@@ -12,6 +13,10 @@ class DatasetsController < ApplicationController
   def show
     # Read the dataset's file content
     @dataset_content = read_dataset_content(@dataset)
+    preview_result = read_dataset_content_for_preview(@dataset)
+    @first_content = preview_result[:first_content]
+    @last_content = preview_result[:last_content]
+    @limited = preview_result[:limited]
   end
 
   def read_dataset_content(dataset)
@@ -60,6 +65,7 @@ class DatasetsController < ApplicationController
 
   private
 
+  # Use callbacks to share common setup or constraints between actions.
   def set_dataset
     @dataset = current_user.datasets.find(params[:id])
   end
@@ -115,6 +121,35 @@ class DatasetsController < ApplicationController
     else
       "categorical"
     end
+  end
+
+  # Method to read and parse the CSV content
+  def read_dataset_content_for_preview(dataset)
+    # Download and parse CSV content
+    csv_content = dataset.file.download
+    parsed_content = CSV.parse(csv_content, headers: true)
+
+    # Store the original headers
+    headers = parsed_content.headers
+
+    # Limit the rows displayed: first 20 and last 10 if more than 30 rows
+    if parsed_content.size > 30
+      # Convert to array to manipulate rows
+      rows = parsed_content.to_a
+      first_rows = rows.first(21)
+      last_rows = rows.last(10)
+      limited = true
+    else
+      first_rows = parsed_content.to_a
+      last_rows = []
+      limited = false
+    end
+
+    # Create two new CSV::Tables with limited rows while preserving the headers
+    first_table_content = CSV::Table.new(first_rows.map { |row| CSV::Row.new(headers, row) })
+    last_table_content = CSV::Table.new(last_rows.map { |row| CSV::Row.new(headers, row) })
+
+    { first_content: first_table_content, last_content: last_table_content, limited: limited }
   end
 
   # Helper method to check if a column contains boolean values

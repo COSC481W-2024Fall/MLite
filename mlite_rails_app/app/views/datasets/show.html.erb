@@ -1,7 +1,7 @@
 <p style="color: green"><%= notice %></p>
 
 <%= render @dataset %>
-<% @dataset.metrics.each do |column_name, metric_values| %>
+<% @dataset&.metrics&.each do |column_name, metric_values| %>
   <h4><strong>Column:</strong> <%= column_name.capitalize %></h4>
 
   <ul>
@@ -36,5 +36,74 @@
   <br>
   <%= link_to 'Train a Model', new_model_path(model: {dataset_id: @dataset.id}) %>
   <%= button_to "Destroy this dataset", @dataset, method: :delete %>
-</div>
 
+  <h2>Data Preview</h2>
+
+  <% if @limited %> <!-- Determines if the dataset is over 30 rows, if so then it will display the first 20 rows and last 10 rows separately -->
+    <p><strong>Note:</strong> Showing the first 20 and last 10 rows of the dataset.</p>
+
+    <h3>First 20 Rows</h3> <!-- Display of the first 20 rows of the dataset within a table -->
+    <table border="1">
+      <thead>
+      <tr>
+        <% @first_content.headers.each do |header| %>
+          <th><%= header %></th>
+        <% end %>
+      </tr>
+      </thead>
+      <tbody>
+      <% @first_content.each_with_index do |row, index| %>
+        <% next if index == 0 %> <!-- Skip the header row -->
+        <tr>
+          <% row.each do |_, value| %>
+            <td><%= value %></td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <h3>Last 10 Rows</h3> <!-- Display of the last 10 rows of the dataset within a table -->
+    <table border="1">
+      <thead>
+      <tr>
+        <% @last_content.headers.each do |header| %>
+          <th><%= header %></th>
+        <% end %>
+      </tr>
+      </thead>
+      <tbody>
+      <% @last_content.each do |row| %>
+        <tr>
+          <% row.each do |_, value| %>
+            <td><%= value %></td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  <% else %> <!-- If the table is at most 30 rows then it will show the whole dataset -->
+    <h3>Full Dataset</h3>
+    <table border="1">
+      <thead>
+      <tr>
+        <% @first_content.headers.each do |header| %>
+          <th><%= header %></th>
+        <% end %>
+      </tr>
+      </thead>
+      <tbody>
+      <% @first_content.each_with_index do |row, index| %>
+        <% next if index == 0 %> <!-- Skip the header row -->
+        <tr>
+          <% row.each do |_, value| %>
+            <td><%= value %></td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+</div>
