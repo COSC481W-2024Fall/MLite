@@ -1,6 +1,34 @@
 <p style="color: green"><%= notice %></p>
 
 <%= render @dataset %>
+<% @dataset.metrics.each do |column_name, metric_values| %>
+  <h4><strong>Column:</strong> <%= column_name.capitalize %></h4>
+
+  <ul>
+    <% metric_values.each do |metric, value| %>
+      <li>
+        <strong><%= metric.to_s.humanize %>:</strong>
+
+        <% if value.is_a?(Hash) %>
+          <!-- For nested hashes (e.g., frequency distribution) -->
+          <ul>
+            <% value.each do |key, val| %>
+              <li><strong><%= key %>:</strong> <%= val %></li>
+            <% end %>
+          </ul>
+        <% elsif value.is_a?(Array) %>
+          <!-- For array values, join them with commas -->
+          <%= value.join(", ") %>
+        <% else %>
+          <!-- For simple values -->
+          <%= value %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <hr> <!-- Horizontal line to separate each column's metrics -->
+<% end %>
 
 <div>
   <%= link_to "Edit this dataset", edit_dataset_path(@dataset) %> |
