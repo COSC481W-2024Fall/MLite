@@ -2,28 +2,32 @@ class DeploymentsController < ApplicationController
   before_action :authenticate_user!, unless: -> { Rails.env.test? }
   before_action :set_deployment, only: %i[ show edit update destroy inference do_inference ]
 
+  # Define columns array for dynamic field generation
+  COLUMNS = [
+    { name: "age", dtype: "int" },
+    { name: "height", dtype: "float" },
+    { name: "has_car", dtype: "bool" },
+    { name: "color", dtype: "categorical", values: ["blue", "red", "green"] }
+  ].freeze
+
   # GET /deployments or /deployments.json
   def index
     @deployments = current_user.deployments.all
-    @inference_result = nil # Ensure @inference_result is nil when on index
   end
 
   # GET /deployments/1 or /deployments/1.json
   def show
-    @inference_result = nil # Ensure @inference_result is nil on show page
   end
 
   # GET /deployments/new
   def new
     @deployment = Deployment.new
     @models = current_user.models
-    @inference_result = nil # Ensure @inference_result is nil on new page
   end
 
   # GET /deployments/1/edit
   def edit
     @models = current_user.models
-    @inference_result = nil # Ensure @inference_result is nil on edit page
   end
 
   # POST /deployments or /deployments.json
@@ -63,30 +67,35 @@ class DeploymentsController < ApplicationController
     redirect_to deployments_path, notice: "Deployment was successfully destroyed."
   end
 
-  # GET /deployments/:id/inference
   def inference
-    @inference_result = nil # Ensure the form starts fresh without an old inference result
+
+    # Ensures @columns is set to the defined COLUMNS array
+    @columns = self.class::COLUMNS
   end
 
-  # POST /deployments/:id/inference
+  # GET /deployments/:id/inference
   def do_inference
-    dummy_field_1 = params[:dummy_field_1]
-    dummy_field_2 = params[:dummy_field_2]
-    dummy_field_3 = params[:dummy_field_3]
-    dummy_field_4 = params[:dummy_field_4]
+    input_values = {}
 
-    # Validate that required fields are present
-    if dummy_field_1.blank? || dummy_field_2.blank? || dummy_field_3.blank? || dummy_field_4.blank?
-      flash.now[:alert] = "All fields must be filled out."
-      @inference_result = nil # Ensure no result is shown
-      render :inference and return
+    # Loop through columns to dynamically fetch input values
+    COLUMNS.each do |column|
+      input_values[column[:name]] = params[column[:name]]
     end
-    # Generate a dummy response message
-    @inference_result = "Based on your input of #{dummy_field_1}, #{dummy_field_2}, #{dummy_field_3}, and #{dummy_field_4}, here's a dummy result."
 
-    # Render the inference page with the result
-    render :inference
+    # Generate a dynamic response message based on input values
+    @inference_result = "Based on your input of #{input_values.values.join(', ')}, here's a dummy result."
+
+    # Redirect to the new action, passing the deployment ID and inference result
+    redirect_to deployment_inference_result_path(@deployment, inference_result: @inference_result)
   end
+
+  # GET /deployments/:id/inference_result
+  def inference_result
+    @deployment = current_user.deployments.find(params[:id]) # Fetch the deployment
+    @inference_result = params[:inference_result]
+    render :inference_result
+  end
+
 
   private
 
@@ -94,6 +103,11 @@ class DeploymentsController < ApplicationController
   def set_deployment
     @deployment = current_user.deployments.find(params[:id])
     @model = @deployment.model
+  end
+
+  # Only allow a list of trusted parameters through.
+  def deployment_params
+    params.require(:deployment).permit(:name, :model_id)
   end
 
   # Only allow a list of trusted parameters through.

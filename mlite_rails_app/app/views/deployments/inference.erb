@@ -1,36 +1,33 @@
 <h1>Run Inference for Deployment</h1>
 
-<!-- Inference Form -->
 <%= form_with(url: deployment_inference_path(@deployment), method: :post, local: true) do |f| %>
-  <div>
-    <%= f.label :dummy_field_1, "Age" %>
-    <%= f.number_field :dummy_field_1, required: true, min: 0, step: 1 %>
-  </div>
+  <% @columns.each do |column| %>
+    <div>
+      <!-- Determines what the data type is for a column -->
+      <% case column[:dtype] %>
 
-  <div>
-    <%= f.label :dummy_field_2, "Height" %>
-    <%= f.number_field :dummy_field_2, required: true, min: 0, step: 0.01 %>
-  </div>
+      <% when "int" %>
+        <%= f.label column[:name], column[:name].humanize %>
+        <%= f.number_field column[:name], required: true, min: 0, step: 1 %>
 
-  <div>
-    <%= f.label :dummy_field_3, "Do you have a car" %>
-    <%= f.check_box :dummy_field_3, {}, "yes", "no" %>
-  </div>
+      <% when "float" %>
+        <%= f.label column[:name], column[:name].humanize %>
+        <%= f.number_field column[:name], required: true, min: 0, step: 0.01 %>
 
-  <div>
-    <%= f.label :dummy_field_4, "Color" %>
-    <%= f.select :dummy_field_4, options_for_select([['red', "red"], ['blue', "blue"], ['green', "green"]]), required: true %>
-  </div>
+      <% when "bool" %>
+        <%= f.label column[:name], column[:name].humanize %>
+        <%= f.check_box column[:name], {}, "yes", "no" %>
+
+      <% when "categorical" %>
+        <%= f.label column[:name], column[:name].humanize %>
+        <%= f.select column[:name], options_for_select(column[:values]), required: true %>
+      <% end %>
+    </div>
+  <% end %>
 
   <div>
     <%= f.submit "Submit", class: 'btn btn-primary' %>
   </div>
-<% end %>
-
-<!-- Show inference result if it exists -->
-<% if @inference_result.present? %>
-  <h2>Inference Result</h2>
-  <p><%= @inference_result %></p>
 <% end %>
 
 <!-- Link to go back to the index page -->

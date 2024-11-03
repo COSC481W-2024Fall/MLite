@@ -28,4 +28,6 @@ Rails.application.routes.draw do
   # Route for inference page
   get 'deployments/:id/inference', to: 'deployments#inference', as: 'deployment_inference'
   post 'deployments/:id/inference', to: 'deployments#do_inference'
+
+  get 'deployments/:id/inference/result', to: 'deployments#inference_result', as: 'deployment_inference_result'
 end
