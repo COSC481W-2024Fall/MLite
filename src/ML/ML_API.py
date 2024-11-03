@@ -17,13 +17,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
 
-# In[ ]:
-
-
-
-
-
-# In[40]:
+# In[2]:
 
 
 class MLAPI:
@@ -108,7 +102,25 @@ class MLAPI:
     def set_local_json_dataset(self, dataset):
         pass
 
-    def recommed_model(self, dataset, columns, features):
+
+    
+    def calculate_r2(self, y_true, y_pred):
+        """
+        Calculate the R² score directly using predictions.
+        
+        Parameters:
+        y_true (array-like): True target values.
+        y_pred (array-like): Predicted target values from a simple linear model.
+        
+        Returns:
+        float: R² score.
+        """
+        ss_res = np.sum((y_true - y_pred) ** 2)  # Residual sum of squares
+        ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)  # Total sum of squares
+        r2 = 1 - (ss_res / ss_tot)
+        return r2
+        
+    def recommed_model(self, columns, features):
         # should probably mostly rely upon user input to recommend a model
         # if data is linear and wants easy explanation -> linear
         # linear data + categorical data -> logistic regression
@@ -117,6 +129,30 @@ class MLAPI:
         # high dimensional data + higher accuracy + fewer entries -> SVM
         # SVM takes longer to train than most trees
         # TODO: add naive bayes algorithm to class
+
+        X = self.dataset[features].values
+        y = self.dataset[columns].values.flatten()
+
+        coefficients = np.linalg.lstsq(X, y, rcond=None)[0]  # Least squares solution
+        y_pred = np.dot(X, coefficients)
+        print(y, y_pred)
+        r2 = self.calculate_r2(y, y_pred)
+
+        if r2 > 0.7:
+            return "Linear Regression: Data is highly linear."
+        elif len(np.unique(y)) == 2:
+            return "Logistic Regression: Linear data with binary outcome."
+        
+            
+
+
+        if X.shape[1] > 10:  # Arbitrary threshold for high-dimensional data
+            return "Decision Tree Classifier: High-dimensional data with many entries."
+        else:
+            return "SVM: High-dimensional data with fewer entries, aiming for higher accuracy."
+
+        
+        
         pass
         
     def logistic_regression(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
@@ -225,13 +261,13 @@ class MLAPI:
                 
 
 
-# In[48]:
+# In[3]:
 
 
 get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
 
 
-# In[24]:
+# In[ ]:
 
 
 
