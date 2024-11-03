@@ -109,9 +109,4 @@ class DeploymentsController < ApplicationController
   def deployment_params
     params.require(:deployment).permit(:name, :model_id)
   end
-
-  # Only allow a list of trusted parameters through.
-  def deployment_params
-    params.require(:deployment).permit(:name, :model_id)
-  end
 end
