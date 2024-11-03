@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[4]:
 
 
 import torch
@@ -17,7 +17,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
 
-# In[2]:
+# In[13]:
 
 
 class MLAPI:
@@ -76,7 +76,7 @@ class MLAPI:
             
         return one_hot_df, new_columns
     
-    def set_local_csv_dataset(self, dataset=None, encoding=None):
+    def set_local_csv_dataset(self, dataset=None, encoding=None, concat=False):
         self.dataset_name = dataset
         if dataset == None:
             from sklearn import datasets
@@ -90,12 +90,18 @@ class MLAPI:
             
         else:
             try:
+                if concat == True:
+                    if encoding != None:
+                        new_dataset = pd.read_csv(self.dataset_name, encoding=encoding)
+                    else:
+                        new_dataset = pd.read_csv(self.dataset_name)
+                    self.dataset = pd.concat([self.dataset, new_dataset])
                 if encoding != None:
                     self.dataset = pd.read_csv(self.dataset_name, encoding=encoding)
                 else:
                     self.dataset = pd.read_csv(self.dataset_name)
-            except:
-                print("Not CSV")
+            except Exception as e:
+                print(e)
                 return False
         return True
 
@@ -261,7 +267,7 @@ class MLAPI:
                 
 
 
-# In[3]:
+# In[14]:
 
 
 get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
