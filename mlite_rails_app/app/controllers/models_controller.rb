@@ -47,6 +47,7 @@ class ModelsController < ApplicationController
     )
 
     if @model.save
+      sqs_messenger = SqsMessageSender.send_training_request(@model.as_json) # schedule training job
       redirect_to model_path(@model), notice: "Model was successfully created."
     else
       assign_variables_for_new
