@@ -77,7 +77,7 @@ class ModelsController < ApplicationController
       @datasets = current_user.datasets
       if params.dig(:model, :dataset_id) || params[:dataset_id]
         @dataset = current_user.datasets.find(params.dig(:model, :dataset_id) || params[:dataset_id])
-        @columns = ['iris_width', 'iris_length', 'iris_species'] # TODO: hardcoded for now
+        @columns = @dataset.columns.map { |column| column["name"] }
       end
       @selected_column = params[:selected_column]
       if @selected_column
@@ -86,11 +86,11 @@ class ModelsController < ApplicationController
     end
     def generate_model_recommendations(dataset, selected_column)
       # TODO: hardcoded for now
-      [
-        { model_type: 'linear_regression', hyperparams: { alpha: 0.1, l1_ratio: 0.5 } },
-        { model_type: 'decision_tree', hyperparams: { max_depth: 5, min_samples_split: 2 } },
-        { model_type: 'mlp', hyperparams: { hidden_layer_sizes: [100, 100], activation: 'relu' } },
-      ]
+      recommender = ModelRecommender.new(dataset)
+      recommender.recommend_model(
+        [selected_column],
+        @columns - [selected_column]
+      )
     end
 
     # Use callbacks to share common setup or constraints between actions.
