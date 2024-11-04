@@ -1,14 +1,7 @@
 class DeploymentsController < ApplicationController
   before_action :authenticate_user!, unless: -> { Rails.env.test? }
   before_action :set_deployment, only: %i[ show edit update destroy inference do_inference ]
-
-  # Define columns array for dynamic field generation
-  COLUMNS = [
-    { name: "age", dtype: "int" },
-    { name: "height", dtype: "float" },
-    { name: "has_car", dtype: "bool" },
-    { name: "color", dtype: "categorical", values: ["blue", "red", "green"] }
-  ].freeze
+  before_action :set_dataset_columns, only: %i[ inference do_inference ]
 
   # GET /deployments or /deployments.json
   def index
@@ -68,9 +61,6 @@ class DeploymentsController < ApplicationController
   end
 
   def inference
-
-    # Ensures @columns is set to the defined COLUMNS array
-    @columns = self.class::COLUMNS
   end
 
   # GET /deployments/:id/inference
@@ -78,7 +68,7 @@ class DeploymentsController < ApplicationController
     input_values = {}
 
     # Loop through columns to dynamically fetch input values
-    COLUMNS.each do |column|
+    @columns.each do |column|
       input_values[column[:name]] = params[column[:name]]
     end
 
@@ -86,7 +76,7 @@ class DeploymentsController < ApplicationController
     @inference_result = "Based on your input of #{input_values.values.join(', ')}, here's a dummy result."
 
     # Redirect to the new action, passing the deployment ID and inference result
-    redirect_to deployment_inference_result_path(@deployment, inference_result: @inference_result)
+    render turbo_stream: turbo_stream.update("inference-results", partial: "deployments/inference_results", locals: { inference_result: @inference_result })
   end
 
   # GET /deployments/:id/inference_result
@@ -96,13 +86,23 @@ class DeploymentsController < ApplicationController
     render :inference_result
   end
 
-
   private
 
   # Use callbacks to share common setup or constraints between actions.
   def set_deployment
     @deployment = current_user.deployments.find(params[:id])
     @model = @deployment.model
+  end
+
+  def set_dataset_columns
+    # Define columns array for dynamic field generation
+    @columns = @deployment.model.dataset.columns.freeze
+    # Convert keys to symbols and transform "values" to an array if it's a string
+    @columns = @columns.map do |col|
+      col = col.transform_keys(&:to_sym)
+      col[:values] = col[:values].split(", ").map(&:strip) if col[:values].is_a?(String)
+      col
+    end
   end
 
   # Only allow a list of trusted parameters through.
