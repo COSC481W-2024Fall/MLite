@@ -1,3 +1,5 @@
+require 'csv'
+
 class Dataset < ApplicationRecord
   has_one_attached :file
   belongs_to :user
@@ -6,7 +8,41 @@ class Dataset < ApplicationRecord
   validates :name, presence: true
   validate :correct_file_type, :file_size_under_limit
 
+  def parse_csv_to_hash
+    dataset = Hash.new { |hash, key| hash[key] = [] }
+    column_schema = columns # Assuming `columns` is a JSON column
+
+    file.open do |csv_file|
+      CSV.foreach(csv_file, headers: true) do |row|
+        column_schema.each do |column|
+          name = column["name"]
+          dtype = column["dtype"]
+
+          value = row[name]
+          dataset[name] << cast_value(value, dtype)
+        end
+      end
+    end
+
+    dataset
+  end
+
   private
+
+  def cast_value(value, dtype)
+    case dtype
+    when "integer"
+      value.to_i
+    when "float"
+      value.to_f
+    when "boolean"
+      %w[true 1].include?(value.to_s.downcase)
+    when "categorical"
+      value.to_s
+    else
+      value # Default to string if dtype is unrecognized
+    end
+  end
 
   # Validate that the file is a .csv or .xlsx (Excel)
   def correct_file_type
