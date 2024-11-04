@@ -1,4 +1,5 @@
 require 'aws-sdk-s3' # Ensure the AWS SDK for S3 is required
+require 'aws-sdk-sqs'
 
 Aws.config.update({
                     region: 'us-east-1',
@@ -6,9 +7,6 @@ Aws.config.update({
                   })
 
 S3_BUCKET = Aws::S3::Resource.new.bucket('my-production-datasets')
-
-# config/initializers/aws.rb
-require 'aws-sdk-sqs'
 
 Aws.config.update({
                     region: 'us-east-1',

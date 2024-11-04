@@ -13,8 +13,6 @@ Rails.application.routes.draw do
   end
   resources :deployments
 
-  # Adding S3Uploads routes
-  resources :s3_uploads, only: [:new, :create]
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
@@ -25,6 +23,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  match 's3_uploads/upload', to: 's3_uploads#upload', via: [:get, :post]
 
+
+  # Route for inference page
+  get 'deployments/:id/inference', to: 'deployments#inference', as: 'deployment_inference'
+  post 'deployments/:id/inference', to: 'deployments#do_inference'
+
+  get 'deployments/:id/inference/result', to: 'deployments#inference_result', as: 'deployment_inference_result'
 end
