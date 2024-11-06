@@ -103,6 +103,9 @@ class DeploymentsController < ApplicationController
       col[:values] = col[:values].split(", ").map(&:strip) if col[:values].is_a?(String)
       col
     end
+    # remove target label from input fields
+    labels = @deployment.model.labels
+    @columns = @columns.select { |col| !labels.include?(col[:name]) }
   end
 
   # Only allow a list of trusted parameters through.
