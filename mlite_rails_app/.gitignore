@@ -36,4 +36,5 @@
 
 # Ignore idea
 .idea/
+node_modules/
 
