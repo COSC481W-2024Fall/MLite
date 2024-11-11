@@ -48,7 +48,7 @@ class ModelsController < ApplicationController
 
     if @model.save
       sqs_messenger = SqsMessageSender.send_training_request(@model.as_json) # schedule training job
-      redirect_to model_path(@model), notice: "Model was successfully created."
+      redirect_to models_path, notice: "Model was successfully created."
     else
       assign_variables_for_new
       render :new, status: :unprocessable_entity
@@ -58,7 +58,7 @@ class ModelsController < ApplicationController
   # PATCH/PUT /models/1 or /models/1.json
   def update
     if @model.update(model_params)
-      redirect_to model_path(@model), notice: "Model was successfully updated."
+      redirect_to models_path, notice: "Model was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end

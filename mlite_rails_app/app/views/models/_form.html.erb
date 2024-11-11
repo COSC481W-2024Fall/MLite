@@ -1,4 +1,4 @@
-<%= form_with(model: model) do |form| %>
+<%= form_with(model: model, class: "flex flex-col items-start justify-start gap-4 w-1/3") do |form| %>
   <% if model.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(model.errors.count, "error") %> prohibited this model from being saved:</h2>
@@ -12,12 +12,12 @@
   <% end %>
 
   <% unless @model.persisted? %>
-    <div>
-      <%= form.label :dataset_id, "Select Dataset" %>
+    <div class="flex flex-row items-center justify-between gap-5 w-full">
+      <%= form.label :dataset_id, "Select Dataset: ", class: "label" %>
       <%= form.select :dataset_id,
                       options_from_collection_for_select(@datasets, :id, :name, @dataset&.id),
                       (@dataset.nil? ? { include_blank: "Select a Dataset" } : {}),
-                      { onchange: 'submitWithGetOnDatasetSelect(this)' } %>
+                      { class: "select select-bordered select-sm", onchange: 'submitWithGetOnDatasetSelect(this)' } %>
     </div>
 
     <script>
@@ -27,11 +27,11 @@
     </script>
 
     <% if @dataset %>
-      <div>
-        <%= label_tag :selected_column, "Select a Target Column: " %>
+      <div class="flex flex-row items-center justify-between gap-5 w-full">
+        <%= label_tag :selected_column, "Select a Target Column: ", class: "label" %>
         <%= select_tag :selected_column,
                        options_for_select(@columns, @selected_column),
-                       { include_blank: @selected_column.nil? ? "Select a Column" : nil, onchange: 'submitWithGetOnColumnSelect(this)' } %>
+                       { class: "select select-bordered select-sm", include_blank: @selected_column.nil? ? "Select a Column" : nil, onchange: 'submitWithGetOnColumnSelect(this)' } %>
       </div>
 
       <script>
@@ -42,19 +42,19 @@
     <% end %>
 
     <% if @selected_column %>
-      <div>
-        <%= form.label :name, style: "display: block" %>
-        <%= form.text_field :name %>
+      <div class="w-full">
+        <%= form.label :name, "Name: ", class: "label w-full"%>
+        <%= form.text_field :name, class: "input input-sm input-bordered w-full" %>
       </div>
 
-      <div>
-        <%= form.label :description, style: "display: block" %>
-        <%= form.text_area :description %>
+      <div class="w-full">
+        <%= form.label :description, "Description: ", class: "label w-full" %>
+        <%= form.text_area :description, class: "textarea textarea-bordered w-full" %>
       </div>
 
       <% @recommended_models.each_with_index do |model, index| %>
-        <div>
-          <%= form.radio_button :selected_model, index, id: "recommended_model_#{index}" %>
+        <div class="flex flex-row items-center gap-2">
+          <%= form.radio_button :selected_model, index, id: "recommended_model_#{index}", class: "radio radio-primary" %>
           <%= form.label "recommended_model_#{index}", "#{model[:model_type].humanize} (Hyperparams: #{model[:hyperparams].to_json})" %>
 
           <!-- Hidden fields to pass the model details -->
@@ -63,23 +63,23 @@
         </div>
       <% end %>
 
-      <div>
-        <%= form.submit %>
+      <div class="mt-5 flex flex-row items-center justify-center w-full">
+        <%= form.submit "Train Model", class: "btn btn-primary" %>
       </div>
     <% end %>
   <% else %>
-    <div>
-      <%= form.label :name, style: "display: block" %>
-      <%= form.text_field :name %>
+    <div class="w-full">
+      <%= form.label :name, "Name: ", class: "label w-full"%>
+      <%= form.text_field :name, class: "input input-sm input-bordered w-full" %>
     </div>
 
-    <div>
-      <%= form.label :description, style: "display: block" %>
-      <%= form.text_area :description %>
+    <div class="w-full">
+      <%= form.label :description, "Description: ", class: "label w-full" %>
+      <%= form.text_area :description, class: "textarea textarea-bordered w-full" %>
     </div>
 
-    <div>
-      <%= form.submit %>
+    <div class="mt-5 flex flex-row items-center justify-center w-full">
+      <%= form.submit "Save Model", class: "btn btn-primary" %>
     </div>
   <% end %>
 <% end %>
