@@ -55,7 +55,15 @@
       <% @recommended_models.each_with_index do |model, index| %>
         <div class="flex flex-row items-center gap-2">
           <%= form.radio_button :selected_model, index, id: "recommended_model_#{index}", class: "radio radio-primary" %>
-          <%= form.label "recommended_model_#{index}", "#{model[:model_type].humanize} (Hyperparams: #{model[:hyperparams].to_json})" %>
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body py-3 px-8">
+              <%= form.label "recommended_model_#{index}" do %>
+                <strong><%= model[:model_type].humanize %></strong>
+                <br>
+                Hyperparams: <%= model[:hyperparams].map { |key, value| "#{key}=#{value}" }.join(", ") %>
+              <% end %>
+            </div>
+          </div>
 
           <!-- Hidden fields to pass the model details -->
           <%= form.hidden_field :model_type, value: model[:model_type], name: "recommended_models[#{index}][model_type]" %>
