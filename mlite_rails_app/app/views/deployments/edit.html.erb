@@ -1,12 +1,15 @@
 <% content_for :title, "Editing deployment" %>
 
-<h1>Editing deployment</h1>
+<div class="flex flex-col items-center justify-around gap-7">
+  <h1 class="text-5xl">Editing Deployment</h1>
+  <%= link_to deployments_path, class: "btn btn-sm btn-primary-outline" do %>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+    </svg>
+    Back
+  <% end %>
+</div>
 
-<%= render "form", deployment: @deployment %>
-
-<br>
-
-<div>
-  <%= link_to "Show this deployment", @deployment %> |
-  <%= link_to "Back to deployments", deployments_path %>
+<div class="mt-10 flex flex-col items-center gap-10">
+  <%= render "form", deployment: @deployment %>
 </div>

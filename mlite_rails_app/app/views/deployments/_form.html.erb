@@ -1,4 +1,4 @@
-<%= form_with(model: deployment) do |form| %>
+<%= form_with(model: deployment, class: "flex flex-col items-start justify-start gap-4 w-1/3") do |form| %>
   <% if deployment.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(deployment.errors.count, "error") %> prohibited this deployment from being saved:</h2>
@@ -11,17 +11,18 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :model_id, "Select Model" %>
-    <%= form.select :model_id, options_from_collection_for_select(@models, :id, :name, params.dig(:deployment, :model_id)) %>
+  <div class="flex flex-row items-center justify-between gap-5 w-full">
+    <%= form.label :dataset_id, "Select Model: ", class: "label" %>
+    <%= form.select :model_id, options_from_collection_for_select(@models, :id, :name, params.dig(:deployment, :model_id)),
+                    (@dataset.nil? ? { include_blank: "Select a Dataset" } : {}) %>
   </div>
 
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+  <div class="w-full">
+    <%= form.label :name, "Name: ", class: "label w-full"%>
+    <%= form.text_field :name, class: "input input-sm input-bordered w-full" %>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <div class="mt-5 flex flex-row items-center justify-center w-full">
+    <%= form.submit "Save Deployment", class: "btn btn-primary" %>
   </div>
 <% end %>

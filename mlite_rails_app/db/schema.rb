@@ -46,7 +46,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_27_154120) do
     t.string "name"
     t.text "description"
     t.integer "size"
-    t.json "columns", default: []
+    t.json "columns"
     t.integer "n_rows"
     t.string "dataset_type"
     t.json "metrics"
