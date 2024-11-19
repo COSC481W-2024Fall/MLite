@@ -1,1 +1,7 @@
-flask
+Flask
+boto3
+torch
+scikit-learn
+joblib
+python-dotenv
+
