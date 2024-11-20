@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[2]:
 
 
 import torch
@@ -15,9 +15,11 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
+import argparse
+from sklearn.neural_network import MLPClassifier, MLPRegressor
 
 
-# In[13]:
+# In[1]:
 
 
 class MLAPI:
@@ -58,9 +60,9 @@ class MLAPI:
         try:
             print("Columns: ")
             print ([self.dataset[col].unique().tolist() for col in self.dataset.columns])
-            # one_hot_df = pd.get_dummies(self.dataset)
+            one_hot_df = pd.get_dummies(self.dataset)
         
-            # new_columns = one_hot_df.columns.difference(self.dataset.columns).tolist()
+            new_columns = one_hot_df.columns.difference(self.dataset.columns).tolist()
             
         # catch when df1 is None
         except AttributeError as e:
@@ -159,11 +161,14 @@ class MLAPI:
 
         
         
-        pass
         
-    def logistic_regression(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+    def logistic_regression(self,label=None, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
         df_encoded = pd.get_dummies(self.dataset, drop_first=True)
-        y = self.dataset[label]
+        if label == None:
+            y = self.dataset[-1]
+        else:
+            y = self.dataset[label]
+            
         if columns == None:
             #assume all other columns and set X_columns to all features not label
             X_columns = [col for col in self.dataset.columns if label not in col]
@@ -184,14 +189,18 @@ class MLAPI:
         print(f"Model Accuracy: {self.accuracy}")
         return self.model
 
-    def linear_regression(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+    def linear_regression(self,label=None, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
         # worth noting that the linear regression method via sklearn is very sparsely implemented
         # takes almost no method arguments
         df_encoded = pd.get_dummies(self.dataset, drop_first=True)
 
         #TODO: get columns from df_encoded if categorical data that is one hot encoded
         
-        y = df_encoded[label]
+        if label == None:
+            y = self.dataset[-1]
+        else:
+            y = self.dataset[label]
+            
         if columns == None:
             #assume all other columns and set X_columns to all features not label
             X_columns = [col for col in df_encoded.columns if label not in col]
@@ -212,8 +221,12 @@ class MLAPI:
         print(f"Model Accuracy: {self.accuracy}")
         return self.model
 
-    def svm(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
-        y = self.dataset[label]
+    def svm(self,label=None, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+        if label == None:
+            y = self.dataset[-1]
+        else:
+            y = self.dataset[label]
+            
         X_columns = None
         if columns == None:
             #assume all other columns and set X_columns to all features not label
@@ -233,8 +246,11 @@ class MLAPI:
         print(f"Model Accuracy: {self.accuracy}")
         return self.model
 
-    def decision_tree(self,label, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
-        y = self.dataset[label]
+    def decision_tree(self,label=None, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+        if label == None:
+            y = self.dataset[-1]
+        else:
+            y = self.dataset[label]
         if columns == None:
             #assume all other columns and set X_columns to all features not label
             X_columns = [col for col in self.dataset.columns if label not in col]
@@ -258,25 +274,128 @@ class MLAPI:
 
         #TODO: Add verbosity to decision tree classifier?
         self.model = DecisionTreeClassifier(random_state = random_state)
-        self.model.fit(X_train, y_train)
-        y_pred = self.model.predict(X_test)
-        self.accuracy = self.model.score(X_test, y_test)
+        self.model.fit(X_train_scaled, y_train)
+        y_pred = self.model.predict(X_test_scaled)
+        self.accuracy = self.model.score(X_test_scaled, y_test)
         print(f"Model Accuracy: {self.accuracy}")
         return self.model
+
+    def mlpClassifier(self,label=None, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+        if label == None:
+            y = self.dataset[-1]
+        else:
+            y = self.dataset[label]
+        if columns == None:
+            #assume all other columns and set X_columns to all features not label
+            X_columns = [col for col in self.dataset.columns if label not in col]
+        else:
+            # use only given columns
+            X_columns = columns
+        X = self.dataset[X_columns]
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        scaler = StandardScaler()
+
+         try:
+            X_train_scaled = scaler.fit_transform(X_train)
+            X_test_scaled = scaler.transform(X_test)
+        except:
+            X_train_scaled = X_train
+            X_test_scaled = X_test   
+        
+        self.model = MLPClassifier(random_state=1, max_iter=300).fit(X_train_scaled, y_train)
+        y_pred = self.model.predict(X_test_scaled)
+        self.accuracy = self.model.score(X_test_scaled, y_test)
+        print(f"Model Accuracy: {self.accuracy}")
+        return self.model
+
+    def mlpRegressor(self,label=None, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+        if label == None:
+            y = self.dataset[-1]
+        else:
+            y = self.dataset[label]
+        if columns == None:
+            #assume all other columns and set X_columns to all features not label
+            X_columns = [col for col in self.dataset.columns if label not in col]
+        else:
+            # use only given columns
+            X_columns = columns
+        X = self.dataset[X_columns]
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        scaler = StandardScaler()
+
+         try:
+            X_train_scaled = scaler.fit_transform(X_train)
+            X_test_scaled = scaler.transform(X_test)
+        except:
+            X_train_scaled = X_train
+            X_test_scaled = X_test            
+            
+        self.model = MLPRegressor(random_state=1, max_iter=300).fit(X_train_scaled, y_train)
+        y_pred = self.model.predict(X_test_scaled)
+        self.accuracy = self.model.score(X_test_scaled, y_test)
+        print(f"Model Accuracy: {self.accuracy}")
+        return self.model
+        
+
+        
 
                 
 
 
-# In[14]:
+# In[3]:
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run machine learning tasks with the MLAPI class.")
+    parser.add_argument('--dataset', type=str, help="Path to the local CSV dataset.")
+    parser.add_argument("--concat", default=False, action="store_true", help="Concat dataset flag")
+    parser.add_argument('--task', type=str, choices=['logistic_regression', 'linear_regression', 'svm', 'decision_tree', 'recommend_model'], 
+                        help="The machine learning task to run.")
+    parser.add_argument('--label', type=str, help="The label column for training.")
+    parser.add_argument('--columns', type=str, nargs='*', help="Feature columns for the model.")
+    parser.add_argument('--test_size', type=float, default=0.25, help="Test size for the train/test split.")
+    parser.add_argument('--random_state', type=int, default=42, help="Random state for reproducibility.")
+
+    args = parser.parse_args()
+
+    # Create an instance of the class
+    ml_api = MLAPI()
+
+    # Load the dataset
+    if args.dataset:
+        if args.concat:
+            ml_api.set_local_csv_dataset(dataset= args.dataset, concat=True)
+        else:
+            ml_api.set_local_csv_dataset(dataset=args.dataset)
+    else:
+        if args.concat:
+            ml_api.set_local_csv_dataset(concat=True)
+        else:
+            ml_api.set_local_csv_dataset()
+
+    # Run the specified task
+    if args.task == 'logistic_regression':
+        ml_api.logistic_regression(label=args.label, columns=args.columns, test_size=args.test_size, random_state=args.random_state)
+    elif args.task == 'linear_regression':
+        ml_api.linear_regression(label=args.label, columns=args.columns, test_size=args.test_size, random_state=args.random_state)
+    elif args.task == 'svm':
+        ml_api.svm(label=args.label, columns=args.columns, test_size=args.test_size, random_state=args.random_state)
+    elif args.task == 'decision_tree':
+        ml_api.decision_tree(label=args.label, columns=args.columns, test_size=args.test_size, random_state=args.random_state)
+    elif args.task == 'recommend_model':
+        ml_api.recommed_model(columns=args.columns, features=args.label)
+    else:
+        print("Invalid task specified. Use --help for options.")
+
+
+# In[6]:
 
 
 get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
-
-
-# In[ ]:
-
-
-
 
 
 # In[ ]:
