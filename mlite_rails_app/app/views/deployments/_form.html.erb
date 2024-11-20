@@ -11,18 +11,22 @@
     </div>
   <% end %>
 
-  <div class="flex flex-row items-center justify-between gap-5 w-full">
-    <%= form.label :dataset_id, "Select Model: ", class: "label" %>
-    <%= form.select :model_id, options_from_collection_for_select(@models, :id, :name, params.dig(:deployment, :model_id)),
-                    (@dataset.nil? ? { include_blank: "Select a Dataset" } : {}) %>
-  </div>
+  <% unless deployment.persisted? %>
+    <div class="flex flex-row items-center justify-between gap-5 w-full">
+      <%= form.label :dataset_id, "Select Model: ", class: "label" %>
+      <%= form.select :model_id,
+                      options_from_collection_for_select(@models, :id, :name, params.dig(:deployment, :model_id)),
+                      { include_blank: "Select a Model" },
+                      class: "select select-bordered select-sm" %>
+    </div>
+  <% end %>
 
   <div class="w-full">
-    <%= form.label :name, "Name: ", class: "label w-full"%>
+    <%= form.label :name, "Name: ", class: "label w-full" %>
     <%= form.text_field :name, class: "input input-sm input-bordered w-full" %>
   </div>
 
   <div class="mt-5 flex flex-row items-center justify-center w-full">
-    <%= form.submit "Save Deployment", class: "btn btn-primary" %>
+    <%= form.submit deployment.persisted? ? "Update Deployment" : "Save Deployment", class: "btn btn-primary" %>
   </div>
 <% end %>
