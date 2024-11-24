@@ -33,42 +33,52 @@
 
 <p class="text-center text-green-600"><%= notice %></p>
 
-<% @dataset&.metrics&.each do |column_name, metric_values| %>
-  <h4 class="text-2xl text-center"><strong>Column:</strong> <%= column_name.capitalize %></h4>
-
-  <div class="card bg-base-100 shadow-xl mx-auto w-3/4 mb-6">
-    <table class="table text-center w-full border-collapse border border-gray-300">
-      <thead>
-      <tr>
-        <th class="border border-gray-300 px-4 py-2">Metric</th>
-        <th class="border border-gray-300 px-4 py-2">Value</th>
-      </tr>
-      </thead>
-      <tbody>
-      <% metric_values.each do |metric, value| %>
-        <% if value.is_a?(Hash) %>
-          <% value.each do |key, val| %>
-            <tr>
-              <td class="border border-gray-300 px-4 py-2"><strong><%= "#{metric.to_s.humanize} - #{key}" %></strong></td>
-              <td class="border border-gray-300 px-4 py-2"><%= val %></td>
-            </tr>
-          <% end %>
-        <% elsif value.is_a?(Array) %>
-          <tr>
-            <td class="border border-gray-300 px-4 py-2"><strong><%= metric.to_s.humanize %></strong></td>
-            <td class="border border-gray-300 px-4 py-2"><%= value.join(", ") %></td>
-          </tr>
-        <% else %>
-          <tr>
-            <td class="border border-gray-300 px-4 py-2"><strong><%= metric.to_s.humanize %></strong></td>
-            <td class="border border-gray-300 px-4 py-2"><%= value %></td>
-          </tr>
-        <% end %>
-      <% end %>
-      </tbody>
-    </table>
+<% if @dataset&.metrics.present? %>
+  <div class="carousel w-full mx-auto w-3/4 mb-6">
+    <% @dataset.metrics.each_with_index do |(column_name, metric_values), index| %>
+      <div id="slide<%= index + 1 %>" class="carousel-item relative w-full">
+        <div class="card bg-base-100 shadow-xl mx-auto w-3/4 p-4">
+          <h4 class="text-2xl text-center"><strong>Column:</strong> <%= column_name.capitalize %></h4>
+          <div class="overflow-x-auto max-h-80"> <!-- Add max-height here for fixed height and enable scroll -->
+            <table class="table text-center w-full border-collapse border border-gray-300 mt-4">
+              <thead>
+              <tr>
+                <th class="border border-gray-300 px-4 py-2">Metric</th>
+                <th class="border border-gray-300 px-4 py-2">Value</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% metric_values.each do |metric, value| %>
+                <% if value.is_a?(Hash) %>
+                  <% value.each do |key, val| %>
+                    <tr>
+                      <td class="border border-gray-300 px-4 py-2"><strong><%= "#{metric.to_s.humanize} - #{key}" %></strong></td>
+                      <td class="border border-gray-300 px-4 py-2"><%= val %></td>
+                    </tr>
+                  <% end %>
+                <% elsif value.is_a?(Array) %>
+                  <tr>
+                    <td class="border border-gray-300 px-4 py-2"><strong><%= metric.to_s.humanize %></strong></td>
+                    <td class="border border-gray-300 px-4 py-2"><%= value.join(", ") %></td>
+                  </tr>
+                <% else %>
+                  <tr>
+                    <td class="border border-gray-300 px-4 py-2"><strong><%= metric.to_s.humanize %></strong></td>
+                    <td class="border border-gray-300 px-4 py-2"><%= value %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+          <a href="#slide<%= index.zero? ? @dataset.metrics.size : index %>" class="btn btn-circle">❮</a>
+          <a href="#slide<%= (index + 2) > @dataset.metrics.size ? 1 : index + 2 %>" class="btn btn-circle">❯</a>
+        </div>
+      </div>
+    <% end %>
   </div>
-
 <% end %>
 
 <div class="flex flex-col items-center gap-5">
