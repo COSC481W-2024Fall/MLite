@@ -77,6 +77,19 @@ Rails.application.configure do
   # Disable caching for Action Mailer templates even if Action Controller
   # caching is enabled.
   config.action_mailer.perform_caching = false
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    user_name: 'apikey', # Fixed SendGrid username
+    password: ENV['SENDGRID_API_KEY'], # Use your API key here
+    address: 'smtp.sendgrid.net',
+    port: '587',
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch("RAILS_APP_HOST", "localhost"),
+    port: ENV["RAILS_APP_PORT"]&.to_i # Omit the port if not set
+  }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
