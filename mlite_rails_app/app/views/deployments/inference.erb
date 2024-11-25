@@ -28,7 +28,7 @@
 
         <% when "categorical" %>
           <%= f.label column[:name], column[:name].humanize, class: "label w-full" %>
-          <%= f.select column[:name], options_for_select(column[:values]), required: true, class: "input input-sm input-bordered w-full" %>
+          <%= f.select column[:name], options_for_select(column[:values]), { required: true}, { class: "select select-bordered select-sm" } %>
         <% end %>
       </div>
     <% end %>
