@@ -1,6 +1,9 @@
 class ModelsController < ApplicationController
+  skip_forgery_protection only: :upload_file
+
   before_action :authenticate_user!, unless: -> { Rails.env.test? }
-  before_action :set_model, only: %i[ show edit update destroy ]
+  before_action :set_model, only: %i[ show edit update destroy]
+  skip_before_action :authenticate_user!, only: :upload_file
 
   # GET /models or /models.json
   def index
@@ -69,6 +72,22 @@ class ModelsController < ApplicationController
     @model.destroy!
 
     redirect_to models_path, notice: "Model was successfully destroyed."
+  end
+
+  def upload_file
+    if params['auth_token'] != ENV["UPLOAD_AUTH_TOKEN"]
+      p params['auth_token']
+      p ENV["UPLOAD_AUTH_TOKEN"]
+      render json: { error: "Invalid auth token" }, status: :unauthorized and return
+    end
+
+    @model = Model.find(params[:id])
+    if params[:file].present?
+      @model.file.attach(params[:file]) # Attach the uploaded file to the model
+      render json: { message: "File uploaded successfully", model: @model }, status: :ok
+    else
+      render json: { error: "No file provided" }, status: :unprocessable_entity
+    end
   end
 
   private

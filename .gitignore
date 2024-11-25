@@ -1,4 +1,4 @@
-
+*.env
 .idea
 *.pyc
 /src/ML/__pycache__

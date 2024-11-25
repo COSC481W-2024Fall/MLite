@@ -2,6 +2,10 @@ import boto3
 from flask import Flask, jsonify, request
 from threading import Thread
 from sqs_handler import poll_sqs
+import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 
 # Initialize Flask app
@@ -12,7 +16,7 @@ AWS_REGION = 'us-east-1'
 QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/209479273389/ml_training_requests.fifo'
 
 # Initialize SQS client
-sqs_client = boto3.client('sqs', region_name=AWS_REGION)
+sqs_client = boto3.client('sqs', region_name=AWS_REGION, aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"))
 
 @app.route('/queue_job', methods=['POST'])
 def queue_job():
