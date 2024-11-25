@@ -6,11 +6,10 @@ import json
 
 import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from src.ML.ML_API import ml_api # RELATIVE IMPORT -> CANNOT RUN SQS HANDLER FROM COMMAND LINE
+# see https://stackoverflow.com/questions/14132789/relative-imports-for-the-billionth-time for explanation
 
-# Add the parent directory to sys.path
-# primarily a python quirk -- may need to eventually create a parent directory runfile
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.ML.ML_API import MLAPI  
 
 
 # AWS SQS Configuration
@@ -70,23 +69,11 @@ def process_message(message_body):
 
     print(f"Processing job: {job_name} with dataset: {dataset}")
     # Here, add your model training logic. For now, simulate training:
-    api = MLAPI
+    api = ml_api
     api.set_local_csv_dataset(dataset)
     if job_name == "recommend_model":
         api.recommed_model()
-    if job_name == "logistic_regression":
-        api.one_hot_encode()
-        model = api.logistic_regression()
-    if job_name == "decision_tree":
-        api.one_hot_encode()
-        model = api.decision_tree()
-    if job_name == "linear_regression":
-        api.one_hot_encode()
-        model = api.linear_regression()
-    if job_name == "svm":
-        api.one_hot_encode()
-        model = api.svm()
+    
 
 
     print(f"Job {job_name} completed.")
-    if model != None: return model
