@@ -332,7 +332,7 @@ if __name__ == "__main__":
 # In[16]:
 
 
-get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
+# get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
 
 
 # In[ ]:

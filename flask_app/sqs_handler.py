@@ -4,8 +4,8 @@ import time
 import json
 import os
 import requests
-from flask import jsonify
-
+from sklearn.linear_model import LogisticRegression, LinearRegression
+import pickle
 
 import sys
 import os
@@ -15,30 +15,53 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.ML.ML_API import MLAPI
 
-
 # AWS SQS Configuration
 AWS_REGION = 'us-east-1'
 QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/209479273389/ml_training_requests.fifo'
 
+def download_file_from_s3(bucket_name, key, download_path):
+    s3_client = boto3.client('s3', region_name=AWS_REGION, aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"))
+    try:
+        s3_client.download_file(bucket_name, key, download_path)
+
+    except Exception as e:
+        print(f"Error downloading or using the file: {str(e)}")
+
 def upload_file_to_rails(model_id, file_path):
-    # The file to upload
+    RAILS_APP_HOST=os.getenv("RAILS_APP_HOST")
+    RAILS_APP_PORT=os.getenv("RAILS_APP_PORT")
     auth_token = os.getenv("UPLOAD_AUTH_TOKEN")
-    rails_url = f"http://localhost:3000/models/{model_id}/upload_file?auth_token={auth_token}"
+    rails_url = f"{'http://localhost' if RAILS_APP_HOST == 'localhost' or not RAILS_APP_HOST else RAILS_APP_HOST}{f':{RAILS_APP_PORT}' if RAILS_APP_PORT else ''}/models/{model_id}/upload_file?auth_token={auth_token}"
 
     try:
-        # Open the file and send it in a POST request
         with open(file_path, 'rb') as file:
             files = {'file': file}
             response = requests.post(rails_url, files=files)
 
-        # Handle the response from Rails
         if response.status_code == 200:
-            return jsonify({"message": "File uploaded successfully", "response": response.json()})
+            {"message": "File uploaded successfully", "response": response.json()}
         else:
-            return jsonify({"error": "Failed to upload file", "details": response.json()}), response.status_code
+            {"error": "Failed to upload file", "details": response.json()}, response.status_code
 
     except Exception as e:
-        return jsonify({"error": "Something went wrong", "details": str(e)}), 500
+        {"error": "Something went wrong", "details": str(e)}, 500
+
+def train_model(model_type, hyperparams, label):
+    api = MLAPI()
+    api.set_local_csv_dataset(dataset='dataset.csv')
+    if model_type == "logistic_regression":
+        api.one_hot_encode()
+        model = api.logistic_regression()
+    if model_type == "decision_tree":
+        api.one_hot_encode()
+        model = api.decision_tree()
+    if model_type == "linear_regression":
+        api.one_hot_encode()
+        model = api.linear_regression()
+    if model_type == "svm":
+        api.one_hot_encode()
+        model = api.svm()
+    return model
 
 def poll_sqs():
     """
@@ -65,7 +88,6 @@ def poll_sqs():
             for message in messages:
                 print(f"Received message: {message['Body']}")
 
-                # Simulate model training
                 process_message(message['Body'])
 
                 # Delete the message after processing
@@ -81,39 +103,19 @@ def poll_sqs():
 
 
 def process_message(message_body):
-    """
-    Simulate the processing of an SQS message (e.g., training a model).Brian 
-    can put his code here
-    """
-    # Parse the message body (assuming JSON format)
     message = json.loads(message_body)
-    job_name = message.get('job_name', 'unknown_job')
-    dataset = message.get('dataset', 'unknown_dataset')
-    model_id = message.get('id', 'unknown_model')
+    
+    model_id = message['training_params']['model']['id']
+    model_type = message['training_params']['model']['model_type']
+    hyperparams = message['training_params']['model']['hyperparams']
+    label = message['training_params']['model']['labels'][0]
+    dataset_s3_key = message['training_params']['dataset_s3_key']
 
-    print(f"Processing job: {job_name} with dataset: {dataset}")
-    # Here, add your model training logic. For now, simulate training:
-    api = MLAPI
-    api.set_local_csv_dataset(dataset)
-    if job_name == "recommend_model":
-        api.recommed_model()
-    if job_name == "logistic_regression":
-        api.one_hot_encode()
-        model = api.logistic_regression()
-    if job_name == "decision_tree":
-        api.one_hot_encode()
-        model = api.decision_tree()
-    if job_name == "linear_regression":
-        api.one_hot_encode()
-        model = api.linear_regression()
-    if job_name == "svm":
-        api.one_hot_encode()
-        model = api.svm()
-
-
-    time.sleep(5)  # Simulate training time
-
-    upload_file_to_rails(model_id, 'temp.txt')
-
-    print(f"Job {job_name} completed.")
-    if model != None: return model
+    print(f"Processing job: {model_id} with dataset: {dataset_s3_key}")
+    download_file_from_s3(os.environ.get('AWS_S3_BUCKET'), dataset_s3_key, 'dataset.csv')
+    # model = train_model(model_type, hyperparams, label)
+    model = LinearRegression() # hardcode model for now
+    with open('model.pkl', 'wb') as file:
+        pickle.dump(model, file)
+    upload_file_to_rails(model_id, 'model.pkl')
+    print(f"Job {model_id} completed.")

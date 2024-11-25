@@ -47,10 +47,14 @@ class ModelsController < ApplicationController
       hyperparams: hyperparams,
       features: @columns - [params[:selected_column]],
       labels: [params[:selected_column]],
+      status: 'queued'
     )
 
     if @model.save
-      sqs_messenger = SqsMessageSender.send_training_request(@model.as_json) # schedule training job
+      sqs_messenger = SqsMessageSender.send_training_request({
+        model: @model.as_json,
+        dataset_s3_key: @model.dataset.file.key
+      }) # schedule training job
       redirect_to models_path, notice: "Model was successfully created."
     else
       assign_variables_for_new
