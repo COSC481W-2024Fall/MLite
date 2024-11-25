@@ -37,7 +37,7 @@ class DeploymentsController < ApplicationController
     )
 
     if @deployment.save
-      redirect_to deployment_path(@deployment), notice: "Deployment was successfully created."
+      redirect_to deployments_path, notice: "Deployment was successfully created."
     else
       @models = current_user.models
       render :new, status: :unprocessable_entity
@@ -47,7 +47,7 @@ class DeploymentsController < ApplicationController
   # PATCH/PUT /deployments/1 or /deployments/1.json
   def update
     if @deployment.update(deployment_params)
-      redirect_to deployment_path(@deployment), notice: "Deployment was successfully updated."
+      redirect_to deployments_path, notice: "Deployment was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -103,9 +103,6 @@ class DeploymentsController < ApplicationController
       col[:values] = col[:values].split(", ").map(&:strip) if col[:values].is_a?(String)
       col
     end
-    # remove target label from input fields
-    labels = @deployment.model.labels
-    @columns = @columns.select { |col| !labels.include?(col[:name]) }
   end
 
   # Only allow a list of trusted parameters through.
