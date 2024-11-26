@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[18]:
+# In[2]:
 
 
 import torch
@@ -16,9 +16,10 @@ import numpy as np
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 import argparse
+from sklearn.neural_network import MLPClassifier, MLPRegressor
 
 
-# In[15]:
+# In[1]:
 
 
 class MLAPI:
@@ -59,9 +60,9 @@ class MLAPI:
         try:
             print("Columns: ")
             print ([self.dataset[col].unique().tolist() for col in self.dataset.columns])
-            # one_hot_df = pd.get_dummies(self.dataset)
+            one_hot_df = pd.get_dummies(self.dataset)
         
-            # new_columns = one_hot_df.columns.difference(self.dataset.columns).tolist()
+            new_columns = one_hot_df.columns.difference(self.dataset.columns).tolist()
             
         # catch when df1 is None
         except AttributeError as e:
@@ -160,7 +161,6 @@ class MLAPI:
 
         
         
-        pass
         
     def logistic_regression(self,label=None, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
         df_encoded = pd.get_dummies(self.dataset, drop_first=True)
@@ -274,16 +274,79 @@ class MLAPI:
 
         #TODO: Add verbosity to decision tree classifier?
         self.model = DecisionTreeClassifier(random_state = random_state)
-        self.model.fit(X_train, y_train)
-        y_pred = self.model.predict(X_test)
-        self.accuracy = self.model.score(X_test, y_test)
+        self.model.fit(X_train_scaled, y_train)
+        y_pred = self.model.predict(X_test_scaled)
+        self.accuracy = self.model.score(X_test_scaled, y_test)
         print(f"Model Accuracy: {self.accuracy}")
         return self.model
+
+    def mlpClassifier(self,label=None, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+        if label == None:
+            y = self.dataset[-1]
+        else:
+            y = self.dataset[label]
+        if columns == None:
+            #assume all other columns and set X_columns to all features not label
+            X_columns = [col for col in self.dataset.columns if label not in col]
+        else:
+            # use only given columns
+            X_columns = columns
+        X = self.dataset[X_columns]
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        scaler = StandardScaler()
+
+        try:
+            X_train_scaled = scaler.fit_transform(X_train)
+            X_test_scaled = scaler.transform(X_test)
+        except:
+            X_train_scaled = X_train
+            X_test_scaled = X_test   
+        
+        self.model = MLPClassifier(random_state=1, max_iter=300).fit(X_train_scaled, y_train)
+        y_pred = self.model.predict(X_test_scaled)
+        self.accuracy = self.model.score(X_test_scaled, y_test)
+        print(f"Model Accuracy: {self.accuracy}")
+        return self.model
+
+    def mlpRegressor(self,label=None, lr=1e-4, test_size=0.25, random_state=42, columns=None, max_epochs=100, verbose=1):
+        if label == None:
+            y = self.dataset[-1]
+        else:
+            y = self.dataset[label]
+        if columns == None:
+            #assume all other columns and set X_columns to all features not label
+            X_columns = [col for col in self.dataset.columns if label not in col]
+        else:
+            # use only given columns
+            X_columns = columns
+        X = self.dataset[X_columns]
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        scaler = StandardScaler()
+
+        try:
+            X_train_scaled = scaler.fit_transform(X_train)
+            X_test_scaled = scaler.transform(X_test)
+        except:
+            X_train_scaled = X_train
+            X_test_scaled = X_test            
+            
+        self.model = MLPRegressor(random_state=1, max_iter=300).fit(X_train_scaled, y_train)
+        y_pred = self.model.predict(X_test_scaled)
+        self.accuracy = self.model.score(X_test_scaled, y_test)
+        print(f"Model Accuracy: {self.accuracy}")
+        return self.model
+        
+
+        
 
                 
 
 
-# In[20]:
+# In[3]:
 
 
 if __name__ == "__main__":
@@ -329,7 +392,7 @@ if __name__ == "__main__":
         print("Invalid task specified. Use --help for options.")
 
 
-# In[16]:
+# In[9]:
 
 
 # get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")

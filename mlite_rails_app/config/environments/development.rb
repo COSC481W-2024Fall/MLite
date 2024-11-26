@@ -33,8 +33,18 @@ Rails.application.configure do
 
   config.active_storage.service = :amazon
 
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    user_name: 'apikey', # Fixed SendGrid username
+    password: ENV['SENDGRID_API_KEY'], # Use your API key here
+    address: 'smtp.sendgrid.net',
+    port: '587',
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
+
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   # Disable caching for Action Mailer templates even if Action Controller
   # caching is enabled.
