@@ -50,17 +50,17 @@ def train_model(model_type, hyperparams, label):
     api = MLAPI()
     api.set_local_csv_dataset(dataset='dataset.csv')
     if model_type == "logistic_regression":
-        api.one_hot_encode()
-        model = api.logistic_regression()
+        # api.one_hot_encode()
+        model = api.logistic_regression(label=label)
     if model_type == "decision_tree":
-        api.one_hot_encode()
-        model = api.decision_tree()
+        # api.one_hot_encode()
+        model = api.decision_tree(label=label)
     if model_type == "linear_regression":
-        api.one_hot_encode()
-        model = api.linear_regression()
+        # api.one_hot_encode()
+        model = api.linear_regression(label=label)
     if model_type == "svm":
-        api.one_hot_encode()
-        model = api.svm()
+        # api.one_hot_encode()
+        model = api.svm(label=label)
     return model
 
 def poll_sqs():
@@ -113,8 +113,8 @@ def process_message(message_body):
 
     print(f"Processing job: {model_id} with dataset: {dataset_s3_key}")
     download_file_from_s3(os.environ.get('AWS_S3_BUCKET'), dataset_s3_key, 'dataset.csv')
-    # model = train_model(model_type, hyperparams, label)
-    model = LinearRegression() # hardcode model for now
+    model = train_model(model_type, hyperparams, label)
+    # model = LinearRegression() # hardcode model for now
     with open('model.pkl', 'wb') as file:
         pickle.dump(model, file)
     upload_file_to_rails(model_id, 'model.pkl')
