@@ -6,7 +6,7 @@ class DatasetsController < ApplicationController
 
   # GET /datasets or /datasets.json
   def index
-    @datasets = current_user.datasets.all
+    @datasets = current_user.datasets.order(created_at: :desc)
   end
 
   # GET /datasets/1 or /datasets/1.json

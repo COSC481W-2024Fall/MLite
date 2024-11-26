@@ -7,7 +7,7 @@ class ModelsController < ApplicationController
 
   # GET /models or /models.json
   def index
-    @models = current_user.models.all
+    @models = current_user.models.order(created_at: :desc)
   end
 
   # GET /models/1 or /models/1.json
@@ -80,14 +80,13 @@ class ModelsController < ApplicationController
 
   def upload_file
     if params['auth_token'] != ENV["UPLOAD_AUTH_TOKEN"]
-      p params['auth_token']
-      p ENV["UPLOAD_AUTH_TOKEN"]
       render json: { error: "Invalid auth token" }, status: :unauthorized and return
     end
 
     @model = Model.find(params[:id])
     if params[:file].present?
       @model.file.attach(params[:file]) # Attach the uploaded file to the model
+      @model.update(status: 'trained')
       render json: { message: "File uploaded successfully", model: @model }, status: :ok
     else
       render json: { error: "No file provided" }, status: :unprocessable_entity
