@@ -19,7 +19,7 @@ import argparse
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 
 
-# In[1]:
+# In[34]:
 
 
 class MLAPI:
@@ -51,17 +51,36 @@ class MLAPI:
         except:
             return 0
 
-    def one_hot_encode(self, inplace=True, dataset=None, cutoff = 10, columns=None):
+    def one_hot_encode(self, inplace=False, cutoff = 10, columns=None, ignore_target=True, target=None):
         # TODO: Fix this
         
         # do a one hot encode of the current dataset and then return 
         # the new column names alongside the new dataframe
-        print("TESTING")
+        print("encoding categorical data")
+        
         try:
             print("Columns: ")
-            print ([self.dataset[col].unique().tolist() for col in self.dataset.columns])
-            one_hot_df = pd.get_dummies(self.dataset)
-        
+            
+            if columns != None:
+                encode_cols = columns
+            else:
+                encode_cols = [col for col in self.dataset.columns if self.dataset[col].dtype == 'object']
+            try:
+                if ignore_target == True and target != None:
+                    encode_cols.remove(target)
+                else:
+                    target = self.dataset.columns.tolist()[-1]
+                    del encode_cols[target]
+            except:
+                print("Target variable not in encoding columns.")
+            
+            # print ([self.dataset[col].unique().tolist() for col in self.dataset.columns])
+            one_hot_df = pd.get_dummies(data=self.dataset, columns=encode_cols)
+            if ignore_target == True and target != None:
+                pd.concat([one_hot_df, self.dataset[[target]]])
+            else:
+                pd.concat([one_hot_df, self.dataset.iloc[:,-1:]])
+                
             new_columns = one_hot_df.columns.difference(self.dataset.columns).tolist()
             
         # catch when df1 is None
@@ -129,14 +148,16 @@ class MLAPI:
         return r2
         
     def recommed_model(self, columns, features):
-        # should probably mostly rely upon user input to recommend a model
-        # if data is linear and wants easy explanation -> linear
-        # linear data + categorical data -> logistic regression
-        # we can get linearity from R^2 score?
-        # high dimensional data + easy explanation or large amount of entries -> decision tree
-        # high dimensional data + higher accuracy + fewer entries -> SVM
-        # SVM takes longer to train than most trees
-        # TODO: add naive bayes algorithm to class
+        """
+        should probably mostly rely upon user input to recommend a model
+        if data is linear and wants easy explanation -> linear
+        linear data + categorical data -> logistic regression
+        we can get linearity from R^2 score?
+        high dimensional data + easy explanation or large amount of entries -> decision tree
+        high dimensional data + higher accuracy + fewer entries -> SVM
+        SVM takes longer to train than most trees
+        TODO: add naive bayes algorithm to class
+        """
 
         X = self.dataset[features].values
         y = self.dataset[columns].values.flatten()
@@ -346,7 +367,7 @@ class MLAPI:
                 
 
 
-# In[3]:
+# In[32]:
 
 
 if __name__ == "__main__":
@@ -392,7 +413,7 @@ if __name__ == "__main__":
         print("Invalid task specified. Use --help for options.")
 
 
-# In[9]:
+# In[37]:
 
 
 get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
