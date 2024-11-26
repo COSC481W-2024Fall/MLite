@@ -1,5 +1,3 @@
-require 'httparty'
-
 class DeploymentsController < ApplicationController
   before_action :authenticate_user!, unless: -> { Rails.env.test? }
   before_action :set_deployment, only: %i[ show edit update destroy inference do_inference ]
@@ -7,7 +5,7 @@ class DeploymentsController < ApplicationController
 
   # GET /deployments or /deployments.json
   def index
-    @deployments = current_user.deployments.all
+    @deployments = current_user.deployments.order(created_at: :desc)
   end
 
   # GET /deployments/1 or /deployments/1.json
@@ -40,7 +38,7 @@ class DeploymentsController < ApplicationController
 
     if @deployment.save
       DeploymentClient.deploy(@deployment)
-      redirect_to deployment_path(@deployment), notice: "Deployment was successfully created."
+      redirect_to deployments_path, notice: "Deployment was successfully created."
     else
       @models = current_user.models
       render :new, status: :unprocessable_entity
@@ -50,7 +48,7 @@ class DeploymentsController < ApplicationController
   # PATCH/PUT /deployments/1 or /deployments/1.json
   def update
     if @deployment.update(deployment_params)
-      redirect_to deployment_path(@deployment), notice: "Deployment was successfully updated."
+      redirect_to deployments_path, notice: "Deployment was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end

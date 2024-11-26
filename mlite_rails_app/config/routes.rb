@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :models do
     member do
       post :deploy
+      post :upload_file
     end
   end
   resources :deployments do

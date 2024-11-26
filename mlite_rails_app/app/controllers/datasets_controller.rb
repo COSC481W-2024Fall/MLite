@@ -6,7 +6,7 @@ class DatasetsController < ApplicationController
 
   # GET /datasets or /datasets.json
   def index
-    @datasets = current_user.datasets.all
+    @datasets = current_user.datasets.order(created_at: :desc)
   end
 
   # GET /datasets/1 or /datasets/1.json
@@ -41,7 +41,7 @@ class DatasetsController < ApplicationController
     render :new, status: :unprocessable_entity unless @dataset.save
     extract_metadata_and_metrics(@dataset) # Extract metadata after saving
     if @dataset.save
-      redirect_to @dataset, notice: "Dataset was successfully created."
+      redirect_to datasets_path, notice: "Dataset was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -50,7 +50,7 @@ class DatasetsController < ApplicationController
   # PATCH/PUT /datasets/1 or /datasets/1.json
   def update
     if @dataset.update(dataset_params)
-      redirect_to @dataset, notice: "Dataset was successfully updated."
+      redirect_to datasets_path, notice: "Dataset was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end

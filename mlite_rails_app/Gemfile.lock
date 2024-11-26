@@ -352,6 +352,7 @@ DEPENDENCIES
   httparty
   importmap-rails
   jbuilder
+  mail
   numo-narray
   pg (~> 1.1)
   puma (>= 5.0)

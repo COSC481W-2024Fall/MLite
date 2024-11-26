@@ -1,4 +1,4 @@
-<%= form_with(model: dataset) do |form| %>
+<%= form_with(model: dataset, class: "flex flex-col items-start justify-start gap-4 w-1/3") do |form| %>
   <% if dataset.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(dataset.errors.count, "error") %> prohibited this dataset from being saved:</h2>
@@ -10,28 +10,24 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+  <div class="w-full">
+    <%= form.label :name, "Name: ", class: "label w-full"%>
+    <%= form.text_field :name, class: "input input-sm input-bordered w-full" %>
   </div>
 
-  <div>
-    <%= form.label :description, style: "display: block" %>
-    <%= form.text_area :description %>
+  <div class="w-full">
+    <%= form.label :description, "Description: ", class: "label w-full" %>
+    <%= form.text_area :description, class: "textarea textarea-bordered w-full" %>
   </div>
 
   <% unless dataset.persisted? %>
     <!-- Code only for #new view -->
-    <div class="field">
-      <%= form.label :file %>
+    <div class="field mt-5 flex flex-row items-center justify-center w-full">
       <%= form.file_field :file %>
     </div>
   <% end %>
 
-  <div>
-    <%= form.submit %>
+  <div class="mt-5 flex flex-row items-center justify-center w-full">
+    <%= form.submit "Save Dataset", class: "btn btn-primary" %>
   </div>
-
-  <!-- Keep only one instance of the "Back to datasets" link -->
-  <%= link_to 'Back to datasets', datasets_path %>
 <% end %>

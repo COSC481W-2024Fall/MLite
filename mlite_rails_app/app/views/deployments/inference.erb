@@ -1,38 +1,45 @@
-<h1>Run Inference for Deployment</h1>
+<div class="flex flex-col items-center justify-around gap-7">
+  <h1 class="text-5xl">Run Inference for Deployment</h1>
+  <%= link_to deployments_path, class: "btn btn-sm btn-primary-outline" do %>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+    </svg>
+    Back
+  <% end %>
+</div>
 
-<%= form_with(url: deployment_inference_path(@deployment), method: :post, local: true) do |f| %>
-  <% @columns.each do |column| %>
-    <div>
-      <!-- Determines what the data type is for a column -->
-      <% case column[:dtype] %>
-      <% when "int" %>
-        <%= f.label column[:name], column[:name].humanize %>
-        <%= f.number_field column[:name], required: true, min: 0, step: 1 %>
+<div class="flex flex-col items-center justify-center w-full">
+  <%= form_with(url: deployment_inference_path(@deployment), class: "flex flex-col items-center gap-4 w-1/3", method: :post, local: true) do |f| %>
+    <% @columns.each do |column| %>
+      <div class="w-full">
+        <!-- Determines what the data type is for a column -->
+        <% case column[:dtype] %>
+        <% when "int" %>
+          <%= f.label column[:name], column[:name].humanize, class: "label w-full"%>
+          <%= f.number_field column[:name], required: true, min: 0, step: 1, class: "input input-sm input-bordered w-full" %>
 
-      <% when "float" %>
-        <%= f.label column[:name], column[:name].humanize %>
-        <%= f.number_field column[:name], required: true, min: 0, step: 0.01 %>
+        <% when "float" %>
+          <%= f.label column[:name], column[:name].humanize, class: "label w-full" %>
+          <%= f.number_field column[:name], required: true, min: 0, step: 0.01, class: "input input-sm input-bordered w-full" %>
 
-      <% when "bool" %>
-        <%= f.label column[:name], column[:name].humanize %>
-        <%= f.check_box column[:name], {}, "yes", "no" %>
+        <% when "bool" %>
+          <%= f.label column[:name], column[:name].humanize, class: "label w-full" %>
+          <%= f.check_box column[:name], {}, "yes", "no", class: "input input-sm input-bordered w-full" %>
 
-      <% when "categorical" %>
-        <%= f.label column[:name], column[:name].humanize %>
-        <%= f.select column[:name], options_for_select(column[:values]), required: true %>
-      <% end %>
+        <% when "categorical" %>
+          <%= f.label column[:name], column[:name].humanize, class: "label w-full" %>
+          <%= f.select column[:name], options_for_select(column[:values]), { required: true}, { class: "select select-bordered select-sm" } %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="mt-5 flex flex-row items-center justify-center w-full">
+      <%= f.submit "Submit", class: 'btn btn-primary' %>
     </div>
   <% end %>
+</div>
 
-  <div>
-    <%= f.submit "Submit", class: 'btn btn-primary' %>
-  </div>
-<% end %>
-
-<!-- Turbo framw to display results -->
+<!-- Turbo frame to display results -->
 <turbo-frame id="inference-results">
   <!-- Results will be displayed here -->
 </turbo-frame>
-
-<!-- Link to go back to the index page -->
-<%= link_to 'Back to Deployments', deployments_path, class: 'btn btn-secondary' %>

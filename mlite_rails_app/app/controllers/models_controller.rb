@@ -1,10 +1,13 @@
 class ModelsController < ApplicationController
+  skip_forgery_protection only: :upload_file
+
   before_action :authenticate_user!, unless: -> { Rails.env.test? }
-  before_action :set_model, only: %i[ show edit update destroy ]
+  before_action :set_model, only: %i[ show edit update destroy]
+  skip_before_action :authenticate_user!, only: :upload_file
 
   # GET /models or /models.json
   def index
-    @models = current_user.models.all
+    @models = current_user.models.order(created_at: :desc)
   end
 
   # GET /models/1 or /models/1.json
@@ -44,10 +47,14 @@ class ModelsController < ApplicationController
       hyperparams: hyperparams,
       features: @columns - [params[:selected_column]],
       labels: [params[:selected_column]],
+      status: 'queued'
     )
 
     if @model.save
-      sqs_messenger = SqsMessageSender.send_training_request(@model.as_json) # schedule training job
+      sqs_messenger = SqsMessageSender.send_training_request({
+        model: @model.as_json,
+        dataset_s3_key: @model.dataset.file.key
+      }) # schedule training job
       redirect_to models_path, notice: "Model was successfully created."
     else
       assign_variables_for_new
@@ -69,6 +76,21 @@ class ModelsController < ApplicationController
     @model.destroy!
 
     redirect_to models_path, notice: "Model was successfully destroyed."
+  end
+
+  def upload_file
+    if params['auth_token'] != ENV["UPLOAD_AUTH_TOKEN"]
+      render json: { error: "Invalid auth token" }, status: :unauthorized and return
+    end
+
+    @model = Model.find(params[:id])
+    if params[:file].present?
+      @model.file.attach(params[:file]) # Attach the uploaded file to the model
+      @model.update(status: 'trained')
+      render json: { message: "File uploaded successfully", model: @model }, status: :ok
+    else
+      render json: { error: "No file provided" }, status: :unprocessable_entity
+    end
   end
 
   private
