@@ -31,7 +31,7 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
-  config.active_storage.service = :local
+  config.active_storage.service = :amazon
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {

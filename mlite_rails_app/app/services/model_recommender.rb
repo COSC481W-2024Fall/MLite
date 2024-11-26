@@ -19,15 +19,24 @@ class ModelRecommender
     r2 = calculate_r2(y, y_pred)
 
     # Model recommendation based on R² score and data characteristics
-    if r2 > 0.7
+    if ['float', 'integer'].include?(column_type(columns.first))
       [{ model_type: "linear_regression", hyperparams: { regularization: "l2" } }]
-    elsif y.uniq.size == 2
-      [{ model_type: "logistic_regression", hyperparams: { regularization: "l2" } }]
-    elsif x.first.size > 10
-      [{ model_type: "decision_tree", hyperparams: { max_depth: 5 } }]
     else
-      [{ model_type: "svm", hyperparams: { kernel: "rbf", C: 1.0 } }]
+      [
+        { model_type: "logistic_regression", hyperparams: { regularization: "l2" } },
+        { model_type: "decision_tree", hyperparams: { max_depth: 5 } },
+        { model_type: "svm", hyperparams: { kernel: "rbf", C: 1.0 } }
+      ]
     end
+    # if r2 > 0.7
+    #   [{ model_type: "linear_regression", hyperparams: { regularization: "l2" } }]
+    # elsif y.uniq.size == 2
+    #   [{ model_type: "logistic_regression", hyperparams: { regularization: "l2" } }]
+    # elsif x.first.size > 10
+    #   [{ model_type: "decision_tree", hyperparams: { max_depth: 5 } }]
+    # else
+    #   [{ model_type: "svm", hyperparams: { kernel: "rbf", C: 1.0 } }]
+    # end
   end
 
   private
@@ -52,8 +61,6 @@ class ModelRecommender
   def column_type(feature_name)
     @dataset_record.columns.find { |col| col["name"] == feature_name }["dtype"]
   end
-
-  private
 
   # Calculate the least squares solution
   def least_squares_solution(x, y)

@@ -1,5 +1,6 @@
-
+*.env
 .idea
 *.pyc
+*venv
 /src/ML/__pycache__
 /src/__pycache__
