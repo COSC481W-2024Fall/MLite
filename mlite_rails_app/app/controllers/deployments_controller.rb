@@ -1,3 +1,5 @@
+require 'httparty'
+
 class DeploymentsController < ApplicationController
   before_action :authenticate_user!, unless: -> { Rails.env.test? }
   before_action :set_deployment, only: %i[ show edit update destroy inference do_inference ]
@@ -37,6 +39,7 @@ class DeploymentsController < ApplicationController
     )
 
     if @deployment.save
+      DeploymentClient.deploy(@deployment)
       redirect_to deployment_path(@deployment), notice: "Deployment was successfully created."
     else
       @models = current_user.models
