@@ -1,5 +1,5 @@
 # Dockerfile for Flask app inside `flask_app/`
-FROM python:3.8-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -11,5 +11,5 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Expose port 5000 and run the Flask app
-EXPOSE 5000
-CMD ["python", "app.py"]
+# EXPOSE 5001
+CMD ["python", "app2.py"]
