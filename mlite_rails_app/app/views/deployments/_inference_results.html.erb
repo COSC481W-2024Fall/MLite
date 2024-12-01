@@ -1,6 +1,16 @@
 <!-- Turbo frame for inference results  -->
-<h1>Inference Result:</h1>
 
-<div>
-  <p><%= inference_result %></p>
+<div class="flex flex-row items-center justify-center mt-20 gap-5">
+  <h2 class="text-2xl">Prediction:</h2>
+
+  <% if request_successful %>
+    <div class="text-primary text-2xl"><%= result %></div>
+  <% else %>
+    <div role="alert" class="alert alert-error w-1/4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>Error! Something went wrong. Please contact support.</span>
+    </div>
+  <% end %>
 </div>
