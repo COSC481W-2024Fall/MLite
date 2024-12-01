@@ -1,6 +1,6 @@
 class Model < ApplicationRecord
   has_one_attached :file
-  has_one :deployment, dependent: :destroy
+  has_many :deployments, dependent: :destroy
   belongs_to :dataset
 
   validates :name, presence: true
