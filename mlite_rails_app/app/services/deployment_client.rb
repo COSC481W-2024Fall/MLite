@@ -10,7 +10,7 @@ class DeploymentClient
   def self.configure
     host = ENV['DEPLOYMENT_SERVER_HOST'] || 'localhost'
     port = ENV['DEPLOYMENT_SERVER_PORT'] || '5002'
-    @@base_uri = "#{host == 'localhost' ? 'http://localhost' : 'https://' + host}#{port ? ':' + port : ''}"
+    @@base_uri = "#{host == 'localhost' ? 'http://localhost' : host}#{port ? ':' + port : ''}"
   end
 
   def self.base_uri
@@ -23,7 +23,7 @@ class DeploymentClient
   end
 
   def self.server_reachable?
-    host = ENV['DEPLOYMENT_SERVER_HOST'] || 'localhost'
+    host = ENV['DEPLOYMENT_SERVER_HOST']&.sub(%r{^https?://}, '') || 'localhost'
     port = (ENV['DEPLOYMENT_SERVER_PORT'] || '5002').to_i
     begin
       Socket.tcp(host, port, connect_timeout: 2) {} # Try to open a TCP connection
