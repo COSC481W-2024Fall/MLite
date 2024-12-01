@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import joblib
-import torch
+# import torch
 import boto3
 import os
 from dotenv import load_dotenv
@@ -34,17 +34,18 @@ def download_model_from_s3(model_filename):
     return model_path
 
 # Loading functions for each model type
-def load_pytorch_model(model_path):
-    model = torch.load(model_path)
-    model.eval()  # Set model to evaluation mode
-    return model
+# def load_pytorch_model(model_path):
+#     model = torch.load(model_path)
+#     model.eval()  # Set model to evaluation mode
+#     return model
 
 def load_sklearn_model(model_path):
-    return joblib.load(model_path)
+    return joblib.load('model.pth')
 
 @app.route('/', methods=['GET'])
 def home():
-    return jsonify({"message": "Hello, World!"})
+    global models
+    return jsonify({"message": "Hello from deployment server!", "models": str(models)})
 
 # Route to set the model
 @app.route('/set_model', methods=['POST'])
@@ -62,10 +63,10 @@ def set_model():
         model_path = download_model_from_s3(model_s3_key)
 
         # Determine model type by file extension and load accordingly
-        if filename.endswith('.pt') or filename.endswith('.pth'):
-            model = load_pytorch_model(model_path)
-            model_type = 'pytorch'
-        elif filename.endswith('.pkl'):
+        # if filename.endswith('.pt') or filename.endswith('.pth'):
+        #     model = load_pytorch_model(model_path)
+        #     model_type = 'pytorch'
+        if filename.endswith('.pkl'):
             model = load_sklearn_model(model_path)
             model_type = 'scikit-learn'
         else:
@@ -95,10 +96,10 @@ def delete_model():
 
 # Preprocessing function for different models
 def preprocess_input(inputs, model_type):
-    if model_type == 'pytorch':
-        return torch.tensor(inputs, dtype=torch.float32)
-    else:
-        return inputs  # For scikit-learn models, inputs are used directly
+    # if model_type == 'pytorch':
+    #     return torch.tensor(inputs, dtype=torch.float32)
+    # else:
+    return inputs  # For scikit-learn models, inputs are used directly
 
 # Route for inference
 @app.route('/inference', methods=['GET'])
@@ -107,8 +108,12 @@ def inference():
     deployment_id = request.args.get('deployment_id')
     model_input = request.args.get('model_input')
 
-    if not deployment_id or deployment_id not in models:
-        return jsonify({"error": "Model not found"}), 400
+    if not deployment_id:
+        return jsonify({"error": "No deployment id passed"}), 400
+    
+    deployment_id = int(deployment_id)
+    if deployment_id not in models:
+        return jsonify({"error": "Model is not deployed"}), 400
 
     model = models[deployment_id]["model"]
     model_type = models[deployment_id]["model_type"]
@@ -123,19 +128,19 @@ def inference():
             processed_input = preprocess_input(inputs, model_type)
 
             # Run inference based on model type
-            if model_type == 'pytorch':
-                with torch.no_grad():
-                    prediction = model(processed_input).tolist()
-            elif model_type == 'scikit-learn':
+            # if model_type == 'pytorch':
+            #     with torch.no_grad():
+            #         prediction = model(processed_input).tolist()
+            if model_type == 'scikit-learn':
                 prediction = model.predict([processed_input]).tolist()
             else:
                 return jsonify({"error": "Unsupported model type for inference"}), 400
 
-            return jsonify({"result": prediction})
+            return jsonify({"result": prediction[0]})
         except (SyntaxError, NameError):
             return jsonify({"error": "Invalid format for model_input"}), 400
     else:
         return jsonify({"error": "model_input parameter is required"}), 400
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=5002, debug=True)
