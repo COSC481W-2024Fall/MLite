@@ -19,6 +19,8 @@ S3_REGION_NAME = os.getenv("AWS_REGION")
 aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
 aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
 
+SERVER_AUTH_TOKEN = os.getenv("DEPLOYMENT_SERVER_AUTH_TOKEN", "my_secret_token")
+
 # Initialize S3 client
 s3_client = boto3.client(
     's3',
@@ -26,6 +28,14 @@ s3_client = boto3.client(
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key
 )
+
+def authenticate_get():
+    request_token = request.args.get('auth_token')
+    return request_token == SERVER_AUTH_TOKEN
+
+def authenticate_post():
+    request_token = request.json.get('auth_token')
+    return request_token == SERVER_AUTH_TOKEN
 
 # Helper function to download the model from S3
 def download_model_from_s3(model_filename):
@@ -45,11 +55,22 @@ def load_sklearn_model(model_path):
 @app.route('/', methods=['GET'])
 def home():
     global models
-    return jsonify({"message": "Hello from deployment server!", "models": str(models)})
+    return jsonify({"message": "Hello from deployment server!"})
+
+@app.route('/models', methods=['GET'])
+def models_list():
+    if not authenticate_get():
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    global models
+    return jsonify({"models": str(models)})
 
 # Route to set the model
 @app.route('/set_model', methods=['POST'])
 def set_model():
+    if not authenticate_post():
+        return jsonify({"error": "Unauthorized"}), 401
+
     global models
     data = request.json
     deployment_id = data.get("deployment_id")
@@ -80,6 +101,9 @@ def set_model():
     
 @app.route('/delete_model', methods=['POST'])
 def delete_model():
+    if not authenticate_post():
+        return jsonify({"error": "Unauthorized"}), 401
+    
     global models
     data = request.json
     deployment_id = data.get("deployment_id")
@@ -104,6 +128,9 @@ def preprocess_input(inputs, model_type):
 # Route for inference
 @app.route('/inference', methods=['GET'])
 def inference():
+    if not authenticate_get():
+        return jsonify({"error": "Unauthorized"}), 401
+    
     global models
     deployment_id = request.args.get('deployment_id')
     model_input = request.args.get('model_input')
@@ -143,4 +170,4 @@ def inference():
         return jsonify({"error": "model_input parameter is required"}), 400
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5002, debug=True)
+    app.run(host="0.0.0.0", port=5002)

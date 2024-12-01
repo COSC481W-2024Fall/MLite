@@ -5,6 +5,7 @@ class DeploymentClient
   include HTTParty
 
   @@base_uri = nil
+  @@deployment_server_auth_token = ENV['DEPLOYMENT_SERVER_AUTH_TOKEN']
 
   def self.configure
     host = ENV['DEPLOYMENT_SERVER_HOST'] || 'localhost'
@@ -15,6 +16,10 @@ class DeploymentClient
   def self.base_uri
     configure unless @@base_uri
     @@base_uri
+  end
+
+  def self.deployment_server_auth_token
+    @@deployment_server_auth_token
   end
 
   def self.server_reachable?
@@ -33,7 +38,7 @@ class DeploymentClient
     return unless server_reachable?
 
     response = post("#{base_uri}/set_model", {
-      body: { deployment_id: deployment_id, model_s3_key: model_s3_key, filename: filename }.to_json,
+      body: { deployment_id: deployment_id, model_s3_key: model_s3_key, filename: filename, auth_token: @@deployment_server_auth_token }.to_json,
       headers: { 'Content-Type' => 'application/json' }
     })
 
@@ -50,7 +55,7 @@ class DeploymentClient
     return unless server_reachable?
 
     response = get("#{base_uri}/inference", {
-      query: { deployment_id: deployment_id, model_input: input.to_json }
+      query: { deployment_id: deployment_id, model_input: input.to_json, auth_token: @@deployment_server_auth_token }
     })
 
     if response.success?
