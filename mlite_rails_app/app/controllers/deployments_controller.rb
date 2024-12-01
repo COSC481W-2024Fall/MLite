@@ -26,18 +26,21 @@ class DeploymentsController < ApplicationController
   # POST /deployments or /deployments.json
   def create
     name = deployment_params[:name]
-    status = "pending" # Set default status
-    deployment_link = "https://deployments.example.com/#{name.parameterize}" # Generate deployment link
+    status = "deployed" # Set default status
+    # deployment_link = "https://deployments.example.com/#{name.parameterize}" # Generate deployment link
 
     @deployment = Deployment.new(
       name: name,
       status: status,
-      deployment_link: deployment_link,
+      # deployment_link: deployment_link,
       model_id: deployment_params[:model_id]
     )
 
     if @deployment.save
-      DeploymentClient.deploy(@deployment)
+      response = DeploymentClient.set_model(@deployment.id, @deployment.model.file.key, @deployment.model.file.filename)
+      unless response && response.success?
+        @deployment.update(status: "error")
+      end
       redirect_to deployments_path, notice: "Deployment was successfully created."
     else
       @models = current_user.models
@@ -70,14 +73,33 @@ class DeploymentsController < ApplicationController
 
     # Loop through columns to dynamically fetch input values
     @columns.each do |column|
-      input_values[column[:name]] = params[column[:name]]
+      dtype = column[:dtype]
+      if dtype == "float"
+        value = params[column[:name]].to_f
+      elsif dtype == "int"
+        value = params[column[:name]].to_i
+      elsif dtype == "bool"
+        value = params[column[:name]] == "true"
+      elsif dtype == "category"
+        value = params[column[:name]]
+      else
+        raise "Unsupported data type: #{dtype}"
+      end
+      input_values[column[:name]] = value
     end
 
-    # Generate a dynamic response message based on input values
-    @inference_result = "Based on your input of #{input_values.values.join(', ')}, here's a dummy result."
+    response = DeploymentClient.inference(@deployment.id, input_values.values)
+
+    @request_successful = response&.success?
+    if @request_successful
+      @result = response["result"]
+    end
+
+    # # Generate a dynamic response message based on input values
+    # @inference_result = "Based on your input of #{response}, here's a dummy result."
 
     # Redirect to the new action, passing the deployment ID and inference result
-    render turbo_stream: turbo_stream.update("inference-results", partial: "deployments/inference_results", locals: { inference_result: @inference_result })
+    render turbo_stream: turbo_stream.update("inference-results", partial: "deployments/inference_results", locals: { request_successful: @request_successful, result: @result })
   end
 
   # GET /deployments/:id/inference_result

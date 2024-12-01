@@ -1,18 +1,38 @@
 require 'httparty'
+require 'socket'
 
 class DeploymentClient
   include HTTParty
 
-  def initialize(base_uri)
-    @base_uri = base_uri # Instance variable for the base URI
+  @@base_uri = nil
+
+  def self.configure
+    host = ENV['DEPLOYMENT_SERVER_HOST'] || 'localhost'
+    port = ENV['DEPLOYMENT_SERVER_PORT'] || '5002'
+    @@base_uri = "#{host == 'localhost' ? 'http://localhost' : 'https://' + host}#{port ? ':' + port : ''}"
   end
 
-  def self.deploy(deployment)
+  def self.base_uri
+    configure unless @@base_uri
+    @@base_uri
+  end
+
+  def self.server_reachable?
+    host = ENV['DEPLOYMENT_SERVER_HOST'] || 'localhost'
+    port = (ENV['DEPLOYMENT_SERVER_PORT'] || '5002').to_i
+    begin
+      Socket.tcp(host, port, connect_timeout: 2) {} # Try to open a TCP connection
+      true
+    rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, SocketError
+      false
+    end
   end
 
   # POST /set_model
-  def set_model(deployment_id, model_s3_key, filename)
-    response = self.class.post("#{@base_uri}/set_model", {
+  def self.set_model(deployment_id, model_s3_key, filename)
+    return unless server_reachable?
+
+    response = post("#{base_uri}/set_model", {
       body: { deployment_id: deployment_id, model_s3_key: model_s3_key, filename: filename }.to_json,
       headers: { 'Content-Type' => 'application/json' }
     })
@@ -26,9 +46,11 @@ class DeploymentClient
   end
 
   # GET /inference
-  def inference(input)
-    response = self.class.get("#{@base_uri}/inference", {
-      query: { model_input: input.to_json }
+  def self.inference(deployment_id, input)
+    return unless server_reachable?
+
+    response = get("#{base_uri}/inference", {
+      query: { deployment_id: deployment_id, model_input: input.to_json }
     })
 
     if response.success?
