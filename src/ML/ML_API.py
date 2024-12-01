@@ -4,7 +4,7 @@
 # In[2]:
 
 
-import torch
+# import torch
 import subprocess
 import pandas as pd
 import sklearn
@@ -39,11 +39,11 @@ class MLAPI:
             # this command not being found can raise quite a few 
             # different errors depending on the configuration
             print('No Nvidia GPU in system!')
-        try:
-            self.device = torch.device('cuda:0')
-            print("GPU available!")
-        except:
-            print("No GPU available in system!")
+        # try:
+        #     self.device = torch.device('cuda:0')
+        #     print("GPU available!")
+        # except:
+        #     print("No GPU available in system!")
         
     def __str__(self):
         try:

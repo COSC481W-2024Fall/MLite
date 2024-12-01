@@ -12,8 +12,9 @@ import os
 
 # Add the parent directory to sys.path
 # primarily a python quirk -- may need to eventually create a parent directory runfile
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.ML.ML_API import MLAPI
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# from src.ML.ML_API import MLAPI
+from ML_API import MLAPI
 
 # AWS SQS Configuration
 AWS_REGION = 'us-east-1'
@@ -23,7 +24,6 @@ def download_file_from_s3(bucket_name, key, download_path):
     s3_client = boto3.client('s3', region_name=AWS_REGION, aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"))
     try:
         s3_client.download_file(bucket_name, key, download_path)
-
     except Exception as e:
         print(f"Error downloading or using the file: {str(e)}")
 
