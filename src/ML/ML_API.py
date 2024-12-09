@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[39]:
+# In[41]:
 
 
 import torch
@@ -17,10 +17,9 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 import argparse
 from sklearn.neural_network import MLPClassifier, MLPRegressor
-import warnings
 
 
-# In[40]:
+# In[50]:
 
 
 class MLAPI:
@@ -59,13 +58,15 @@ class MLAPI:
         print("encoding categorical data")
         
         try:
-            print("Columns: ")
-            
             if columns != None:
+                # grab columns to encode by name
                 encode_cols = columns
             else:
+                # take all categorical columns by default (string or object columns)
                 encode_cols = [col for col in self.dataset.columns if self.dataset[col].dtype == 'object']
             try:
+                print("Columns: ")
+                print(encode_cols)
                 if ignore_target == True and target != None:
                     encode_cols.remove(target)
                 elif ignore_target == True:
@@ -378,7 +379,7 @@ class MLAPI:
                 
 
 
-# In[32]:
+# In[51]:
 
 
 if __name__ == "__main__":
@@ -424,10 +425,8 @@ if __name__ == "__main__":
         print("Invalid task specified. Use --help for options.")
 
 
-# In[38]:
+# In[52]:
 
-
-get_ipython().system("jupyter nbconvert --to script 'ML_API.ipynb'")
 
 
 # In[ ]:
