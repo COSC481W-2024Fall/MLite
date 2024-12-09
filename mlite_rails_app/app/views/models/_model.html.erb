@@ -1,8 +1,9 @@
-<div id="<%= dom_id model %>" class="card bg-base-100 shadow-xl">
+<div id="<%= dom_id model %>" class="card bg-base-100 shadow-xl w-full max-w-full">
   <div class="card-body">
-    <div class="flex flex-row items-center justify-between w-full">
-      <h2 class="card-title text-primary"><%= model.name %></h2>
-      <div class="w-15 flex flex-col items-end gap-2">
+    <div class="flex flex-wrap items-center justify-between w-full">
+      <!-- Model name with overflow handling -->
+      <h2 class="card-title text-primary truncate w-full sm:w-auto" style="max-width: calc(100% - 150px);"><%= model.name %></h2>
+      <div class="w-full sm:w-15 flex flex-col items-end gap-2">
         <span class="<%= case model.status
                          when 'trained' then 'bg-success text-success-content'
                          when 'in-progress' then 'bg-warning text-warning-content'
@@ -16,19 +17,22 @@
       </div>
     </div>
 
-    <p><strong>Description:</strong> <%= model.description %></p>
+    <!-- Updated Description Section to handle long words -->
+    <p><strong>Description:</strong> <span class="break-words"><%= model.description %></span></p>
 
-    <div class="flex flex-row items-start gap-10">
-      <div class="flex flex-col justify-start">
+    <div class="flex flex-wrap gap-10 w-full">
+      <!-- Left Section -->
+      <div class="flex flex-col justify-start w-full sm:w-auto">
         <p><strong>Features:</strong> <%= model.features.join(", ") %></p>
         <p><strong>Labels:</strong> <%= model.labels.join(", ") %></p>
         <p><strong>Size:</strong> <%= human_readable_size(model.size) %></p>
       </div>
-      <div class="flex flex-col justify-start">
+
+      <!-- Right Section (Models and Hyperparams) -->
+      <div class="flex flex-col justify-start w-full sm:w-auto ml-auto">
         <p><strong>Model type:</strong> <%= model.model_type %></p>
         <p><strong>Hyperparams:</strong> <%= model.hyperparams.map { |key, value| "#{key}=#{value}" }.join(", ") %></p>
       </div>
-
     </div>
 
     <div class="card-actions justify-end">
@@ -46,15 +50,15 @@
       <div class="px-3"></div>
 
       <% if model.file.attached? %>
-          <%= link_to rails_blob_path(model.file, disposition: "attachment"), class: "btn text-primary flex items-center justify-center space-x-2" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>
-          <% end %>
+        <%= link_to rails_blob_path(model.file, disposition: "attachment"), class: "btn text-primary flex items-center justify-center space-x-2" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+        <% end %>
       <% end %>
       <%= link_to new_deployment_path(deployment: {model_id: model.id}), class: "btn btn-primary" do %>
         Deploy
-    <% end %>
+      <% end %>
     </div>
   </div>
 </div>
