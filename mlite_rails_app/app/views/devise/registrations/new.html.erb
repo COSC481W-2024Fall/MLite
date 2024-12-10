@@ -3,6 +3,13 @@
     <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
     <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign up for MLite</h2>
   </div>
+  <div class="alert alert-warning">
+    <p>Important: Our email confirmation will go to your spam. Please check your spam or junk mail.</p>
+  </div>
+
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+    <!-- Existing form content -->
+  <% end %>
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'space-y-6' }) do |f| %>
