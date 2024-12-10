@@ -1,5 +1,8 @@
 <% content_for :title, "Deployments" %>
 
+
+
+
 <div class="flex flex-col items-center justify-around gap-7">
   <h1 class="text-5xl">Deployments</h1>
   <%= link_to new_deployment_path, class: "btn btn-sm btn-primary" do %>
@@ -8,6 +11,11 @@
     </svg>
     New deployment
   <% end %>
+</div>
+
+
+<div class="info-text" style="margin-top: 20px;">
+  <p>Deploy and manage your trained models for real-time predictions. Once a model is trained, you can host it in a deployment environment for immediate use in forecasting, classification, or other prediction tasks.</p>
 </div>
 
 <div id="deployments" class="mt-10 flex flex-col items-center gap-10">
