@@ -39,7 +39,7 @@ class ModelsController < ApplicationController
     if selected_model_index.nil? || params[:recommended_models][selected_model_index].nil?
       @model = Model.new(model_params) # Initialize model with any provided data
       assign_variables_for_new
-      flash.now[:alert] = "You must select a recommended model before proceeding."
+      flash.now[:alert] = "You must select a recommended model from the list before proceeding."
       render :new, status: :unprocessable_entity and return
     end
     model_type = params[:recommended_models][selected_model_index][:model_type]

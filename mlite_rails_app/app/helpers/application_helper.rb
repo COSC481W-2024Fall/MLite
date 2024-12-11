@@ -11,4 +11,13 @@ module ApplicationHelper
 
     "#{size.round(2)} #{unit}"
   end
+
+  def class_for_flash(type)
+    case type
+    when 'alert'
+      'alert-warning'
+    else
+      'alert-success'
+    end
+  end
 end
