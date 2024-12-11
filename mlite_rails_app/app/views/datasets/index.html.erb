@@ -10,6 +10,10 @@
   <% end %>
 </div>
 
+<div class="info-text" style="margin-top: 20px;">
+  <p>Upload, manage, and explore your datasets here. This page lets you upload tabular datasets (e.g., CSV files), view their details, and prepare them for analysis and model building. Analyze features, metrics, and meaningful datapoints for insights.</p>
+</div>
+
 <div id="datasets" class="mt-10 flex flex-col items-center gap-10">
   <% @datasets.each do |dataset| %>
     <%= render dataset %>
