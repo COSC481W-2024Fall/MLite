@@ -44,7 +44,9 @@ class ModelsController < ApplicationController
     end
     model_type = params[:recommended_models][selected_model_index][:model_type]
     hyperparams = JSON.parse(params[:recommended_models][selected_model_index][:hyperparams])
-    @columns = ['iris_width', 'iris_length', 'iris_species'] # hardcoded for now
+
+    dataset = Dataset.find(model_params[:dataset_id])
+    @columns = dataset.columns.map { |item| item["name"] }
 
     @model = Model.new(
       name: model_params[:name],
@@ -93,6 +95,7 @@ class ModelsController < ApplicationController
     @model = Model.find(params[:id])
     if params[:file].present?
       @model.file.attach(params[:file]) # Attach the uploaded file to the model
+      @model.size = params[:file].size
       ordered_input_columns = JSON.parse(params[:input_columns])
       @model.update(status: 'trained', ordered_input_columns: ordered_input_columns)
       render json: { message: "File uploaded successfully", model: @model }, status: :ok

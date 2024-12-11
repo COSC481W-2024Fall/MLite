@@ -29,6 +29,13 @@ class DeploymentsController < ApplicationController
     status = "deployed" # Set default status
     # deployment_link = "https://deployments.example.com/#{name.parameterize}" # Generate deployment link
 
+    if current_user.deployments.count >= 2
+      @deployment = Deployment.new(deployment_params) # Initialize deployment with any provided data
+      @models = current_user.models
+      flash.now[:alert] = "You cannot deploy more than 2 models at a time. Delete an existing deployment before creating a new one."
+      render :new, status: :unprocessable_entity and return
+    end
+
     @deployment = Deployment.new(
       name: name,
       status: status,

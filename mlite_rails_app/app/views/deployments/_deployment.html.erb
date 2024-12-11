@@ -18,6 +18,15 @@
 
     <hr class="text-primary my-2">
 
+    <div class="flex flex-col">
+      <p><strong>Dataset: </strong>
+        <%= link_to deployment.model.dataset.name, deployment.model.dataset, class: "text-primary underline" %>
+      </p>
+      <p><strong>Model: </strong>
+        <%= link_to deployment.model.name, models_path, class: "text-primary underline" %>
+      </p>
+    </div>
+
     <div class="flex flex-row mt-2 card-actions justify-center">
       <%= link_to edit_deployment_path(deployment), class: "btn text-secondary flex items-center justify-center space-x-2" do %>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -30,11 +39,12 @@
         </svg>
       <% end %>
 
-      <div class="px-3"></div>
-
-      <div class="card-actions justify-end">
-        <%= link_to "Run Inference", inference_deployment_path(deployment), class: "btn btn-primary flex items-center justify-center space-x-2" %>
-      </div>
+      <% if deployment.status == "deployed" %>
+        <div class="px-3"></div>
+        <div class="card-actions justify-end">
+          <%= link_to "Run Inference", inference_deployment_path(deployment), class: "btn btn-primary flex items-center justify-center space-x-2" %>
+        </div>
+      <% end %>
 
     </div>
 

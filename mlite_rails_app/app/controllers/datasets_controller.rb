@@ -136,7 +136,7 @@ class DatasetsController < ApplicationController
     if parsed_content.size > 30
       # Convert to array to manipulate rows
       rows = parsed_content.to_a
-      first_rows = rows.first(21)
+      first_rows = rows.first(11)
       last_rows = rows.last(10)
       limited = true
     else
