@@ -76,11 +76,11 @@ class DeploymentsController < ApplicationController
       dtype = column[:dtype]
       if dtype == "float"
         value = params[column[:name]].to_f
-      elsif dtype == "int"
+      elsif dtype == "integer"
         value = params[column[:name]].to_i
-      elsif dtype == "bool"
-        value = params[column[:name]] == "true"
-      elsif dtype == "category"
+      elsif dtype == "boolean"
+        value = params[column[:name]] == "Yes" ? 1 : 0
+      elsif dtype == "categorical"
         value = params[column[:name]]
       else
         raise "Unsupported data type: #{dtype}"
@@ -88,7 +88,31 @@ class DeploymentsController < ApplicationController
       input_values[column[:name]] = value
     end
 
-    response = DeploymentClient.inference(@deployment.id, input_values.values)
+    ordered_input_columns = @deployment.model.ordered_input_columns
+
+    true_columns = []
+
+    new_input_values = []
+
+    ordered_input_columns.each do |col|
+      if input_values.has_key?(col)
+        new_input_values << input_values[col]
+      else
+        new_input_values << 0
+      end
+    end
+
+    input_values.each do |key, val|
+      next if ordered_input_columns.include?(key)
+
+      comb = "#{key}_#{val}"
+      if ordered_input_columns.include?(comb)
+        idx = ordered_input_columns.index(comb)
+        new_input_values[idx] = 1
+      end
+    end
+
+    response = DeploymentClient.inference(@deployment.id, new_input_values)
 
     @request_successful = response&.success?
     if @request_successful
