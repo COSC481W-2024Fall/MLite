@@ -45,6 +45,8 @@ class ModelRecommender
   def encode_feature(values, feature_name)
     if column_type(feature_name) == "categorical"
       encode_categorical(values)
+    elsif column_type(feature_name) == "boolean"
+      values.map { |v| v ? 1 : 0 }
     else
       values.map(&:to_f) # Convert to float for numerical columns
     end
