@@ -51,32 +51,65 @@ class MLAPI:
         except:
             return 0
 
-    def one_hot_encode(self, inplace=True, dataset=None, cutoff = 10, columns=None):
-        # TODO: Fix this
+    def one_hot_encode(self, inplace=False, cutoff = 150, columns=None, ignore_target=True, target=None):
         
         # do a one hot encode of the current dataset and then return 
         # the new column names alongside the new dataframe
-        print("TESTING")
-        try:
-            print("Columns: ")
-            print ([self.dataset[col].unique().tolist() for col in self.dataset.columns])
-            one_hot_df = pd.get_dummies(self.dataset)
+        print("encoding categorical data")
         
-            new_columns = one_hot_df.columns.difference(self.dataset.columns).tolist()
+        try:
+            if columns != None:
+                # grab columns to encode by name
+                encode_cols = columns
+            else:
+                # take all categorical columns by default (string or object columns)
+                encode_cols = [col for col in self.dataset.columns if self.dataset[col].dtype == 'object']
+            try:
+                print("Columns: ")
+                print(encode_cols)
+                if ignore_target == True and target != None:
+                    encode_cols.remove(target)
+                elif ignore_target == True:
+                    target = self.dataset.columns.tolist()[-1]
+                    del encode_cols[target]
+                else:
+                    pass
+            except:
+                print("Target variable not in encoding columns.")
             
+            # print ([self.dataset[col].unique().tolist() for col in self.dataset.columns])
+            one_hot_df = pd.get_dummies(data=self.dataset, columns=encode_cols)
+            if ignore_target == True and target != None:
+                pd.concat([one_hot_df, self.dataset[[target]]])
+            elif ignore_target == True:
+                pd.concat([one_hot_df, self.dataset.iloc[:,-1:]])
+            else:
+                pass
+            
+            new_columns = one_hot_df.columns.difference(self.dataset.columns).tolist()
+            if len(new_columns) > cutoff:
+                raise ValueError(f"There are {len(new_columns)} new columns generated, consider using fewer categories within your data.")
+                
         # catch when df1 is None
         except AttributeError as e:
             print(e)
             return None, None
+            
         # catch when it hasn't even been defined
         except NameError as e:
             print(e)
             return None, None
+
+        except ValueError as e:
+            print(e)
+            pass
             
         if inplace:
             self.dataset = one_hot_df
+
+        ordered_input_columns = [col for col in self.dataset.columns if target not in col]
             
-        return one_hot_df, new_columns
+        return one_hot_df, ordered_input_columns
     
     def set_local_csv_dataset(self, dataset=None, encoding=None, concat=False):
         self.dataset_name = dataset
@@ -102,6 +135,8 @@ class MLAPI:
                     self.dataset = pd.read_csv(self.dataset_name, encoding=encoding)
                 else:
                     self.dataset = pd.read_csv(self.dataset_name)
+
+                self.dataset = self.dataset.dropna() # drop any rows with missing data
             except Exception as e:
                 print(e)
                 return False
@@ -129,14 +164,16 @@ class MLAPI:
         return r2
         
     def recommed_model(self, columns, features):
-        # should probably mostly rely upon user input to recommend a model
-        # if data is linear and wants easy explanation -> linear
-        # linear data + categorical data -> logistic regression
-        # we can get linearity from R^2 score?
-        # high dimensional data + easy explanation or large amount of entries -> decision tree
-        # high dimensional data + higher accuracy + fewer entries -> SVM
-        # SVM takes longer to train than most trees
-        # TODO: add naive bayes algorithm to class
+        """
+        should probably mostly rely upon user input to recommend a model
+        if data is linear and wants easy explanation -> linear
+        linear data + categorical data -> logistic regression
+        we can get linearity from R^2 score?
+        high dimensional data + easy explanation or large amount of entries -> decision tree
+        high dimensional data + higher accuracy + fewer entries -> SVM
+        SVM takes longer to train than most trees
+        TODO: add naive bayes algorithm to class
+        """
 
         X = self.dataset[features].values
         y = self.dataset[columns].values.flatten()
@@ -304,7 +341,7 @@ class MLAPI:
             X_train_scaled = X_train
             X_test_scaled = X_test   
         
-        self.model = MLPClassifier(random_state=1, max_iter=300).fit(X_train_scaled, y_train)
+        self.model = MLPClassifier(random_state=1, max_iter=3000).fit(X_train_scaled, y_train)
         y_pred = self.model.predict(X_test_scaled)
         self.accuracy = self.model.score(X_test_scaled, y_test)
         print(f"Model Accuracy: {self.accuracy}")
@@ -334,7 +371,7 @@ class MLAPI:
             X_train_scaled = X_train
             X_test_scaled = X_test            
             
-        self.model = MLPRegressor(random_state=1, max_iter=300).fit(X_train_scaled, y_train)
+        self.model = MLPRegressor(random_state=1, max_iter=3000).fit(X_train_scaled, y_train)
         y_pred = self.model.predict(X_test_scaled)
         self.accuracy = self.model.score(X_test_scaled, y_test)
         print(f"Model Accuracy: {self.accuracy}")
