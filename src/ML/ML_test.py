@@ -12,7 +12,7 @@ from ML_API import MLAPI
 import pandas as pd
 
 
-# In[10]:
+# In[2]:
 
 
 api = MLAPI()
@@ -20,7 +20,18 @@ api.set_local_csv_dataset()
 print(api.dataset)
 
 
-# In[11]:
+# In[3]:
+
+
+one_hot_df, new_columns = api.one_hot_encode(target="target")
+print(one_hot_df)
+print(new_columns)
+one_hot_df, new_columns = api.one_hot_encode(columns=["sepal length (cm)", "target"], target="target")
+print(one_hot_df)
+print(new_columns)
+
+
+# In[3]:
 
 
 print(api.logistic_regression('target', max_epochs=700))
@@ -28,14 +39,14 @@ print(api.linear_regression('target', max_epochs=700))
 print(api.decision_tree('target', max_epochs=700))
 
 
-# In[12]:
+# In[4]:
 
 
 print(api.dataset)
 print(api.recommed_model(['target'], ['sepal length (cm)']))
 
 
-# In[13]:
+# In[5]:
 
 
 api = MLAPI()
@@ -44,14 +55,14 @@ print(api.dataset)
 svm = api.svm("Purchased", columns=["Age", "EstimatedSalary"])
 
 
-# In[14]:
+# In[6]:
 
 
 mlpr = api.mlpRegressor("Purchased", columns=["Age", "EstimatedSalary"])
 mlpr = api.mlpClassifier("Purchased", columns=["Age", "EstimatedSalary"])
 
 
-# In[21]:
+# In[7]:
 
 
 dataset = "../Data/archive 2/Iris.csv"
@@ -59,26 +70,26 @@ pd.read_csv(dataset)
 api.set_local_csv_dataset(dataset=dataset, concat=True)
 
 
-# In[22]:
+# In[8]:
 
 
 print(svm)
 
 
-# In[23]:
+# In[9]:
 
 
 import pickle as pkl
 pkl.dump(svm, open("svm.pkl", 'wb'))
 
 
-# In[26]:
+# In[10]:
 
 
 print(api.decision_tree('Species', max_epochs=10))
 
 
-# In[27]:
+# In[11]:
 
 
 api.one_hot_encode()
@@ -86,23 +97,9 @@ api.one_hot_encode()
 # print(api.linear_regression('popularity', max_epochs=10))
 
 
-# In[18]:
+# In[4]:
 
 
-api.set_local_csv_dataset("../Data/top_rated_9000_movies_on_TMDB.csv")
-
-
-# In[7]:
-
-
-import pandas as pd
-pd.read_csv("Worlds Best 50 Hotels.csv", encoding='latin-1')
-
-
-# In[5]:
-
-
-get_ipython().system("jupyter nbconvert --to script 'ML_test.ipynb'")
 
 
 # In[ ]:

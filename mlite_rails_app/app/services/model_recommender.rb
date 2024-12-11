@@ -20,12 +20,16 @@ class ModelRecommender
 
     # Model recommendation based on R² score and data characteristics
     if ['float', 'integer'].include?(column_type(columns.first))
-      [{ model_type: "linear_regression", hyperparams: { regularization: "l2" } }]
+      [
+        { model_type: "linear_regression", hyperparams: { regularization: "l2" } },
+        { model_type: "neural_network_regression", hyperparams: { iterations: 300} },
+      ]
     else
       [
         { model_type: "logistic_regression", hyperparams: { regularization: "l2" } },
         { model_type: "decision_tree", hyperparams: { max_depth: 5 } },
-        { model_type: "svm", hyperparams: { kernel: "rbf", C: 1.0 } }
+        { model_type: "svm", hyperparams: { kernel: "rbf", C: 1.0 } },
+        { model_type: "neural_network_classifier", hyperparams: { iterations: 300 } }
       ]
     end
     # if r2 > 0.7
@@ -45,6 +49,8 @@ class ModelRecommender
   def encode_feature(values, feature_name)
     if column_type(feature_name) == "categorical"
       encode_categorical(values)
+    elsif column_type(feature_name) == "boolean"
+      values.map { |v| v ? 1 : 0 }
     else
       values.map(&:to_f) # Convert to float for numerical columns
     end

@@ -14,7 +14,7 @@
       <div class="w-full">
         <!-- Determines what the data type is for a column -->
         <% case column[:dtype] %>
-        <% when "int" %>
+        <% when "integer" %>
           <%= f.label column[:name], column[:name].humanize, class: "label w-full"%>
           <%= f.number_field column[:name], required: true, min: 0, step: 1, class: "input input-sm input-bordered w-full" %>
 
@@ -22,9 +22,9 @@
           <%= f.label column[:name], column[:name].humanize, class: "label w-full" %>
           <%= f.number_field column[:name], required: true, min: 0, step: 0.01, class: "input input-sm input-bordered w-full" %>
 
-        <% when "bool" %>
+        <% when "boolean" %>
           <%= f.label column[:name], column[:name].humanize, class: "label w-full" %>
-          <%= f.check_box column[:name], {}, "yes", "no", class: "input input-sm input-bordered w-full" %>
+          <%= f.select column[:name], options_for_select(["Yes", "No"]), { required: true}, { class: "select select-bordered select-sm" } %>
 
         <% when "categorical" %>
           <%= f.label column[:name], column[:name].humanize, class: "label w-full" %>

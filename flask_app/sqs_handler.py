@@ -27,7 +27,7 @@ def download_file_from_s3(bucket_name, key, download_path):
     except Exception as e:
         print(f"Error downloading or using the file: {str(e)}")
 
-def upload_file_to_rails(model_id, file_path):
+def upload_file_to_rails(model_id, input_columns, file_path):
     RAILS_APP_HOST=os.getenv("RAILS_APP_HOST")
     RAILS_APP_PORT=os.getenv("RAILS_APP_PORT")
     auth_token = os.getenv("UPLOAD_AUTH_TOKEN")
@@ -36,7 +36,8 @@ def upload_file_to_rails(model_id, file_path):
     try:
         with open(file_path, 'rb') as file:
             files = {'file': file}
-            response = requests.post(rails_url, files=files)
+            payload = {'input_columns': json.dumps(input_columns)}
+            response = requests.post(rails_url, files=files, data=payload)
 
         if response.status_code == 200:
             {"message": "File uploaded successfully", "response": response.json()}
@@ -50,18 +51,24 @@ def train_model(model_type, hyperparams, label):
     api = MLAPI()
     api.set_local_csv_dataset(dataset='dataset.csv')
     if model_type == "logistic_regression":
-        # api.one_hot_encode()
+        _, input_columns = api.one_hot_encode(inplace=True, target=label)
         model = api.logistic_regression(label=label)
     if model_type == "decision_tree":
-        # api.one_hot_encode()
+        _, input_columns = api.one_hot_encode(inplace=True, target=label)
         model = api.decision_tree(label=label)
     if model_type == "linear_regression":
-        # api.one_hot_encode()
+        _, input_columns = api.one_hot_encode(inplace=True, target=label)
         model = api.linear_regression(label=label)
     if model_type == "svm":
-        # api.one_hot_encode()
+        _, input_columns = api.one_hot_encode(inplace=True, target=label)
         model = api.svm(label=label)
-    return model
+    if model_type == "neural_network_regression":
+        _, input_columns = api.one_hot_encode(inplace=True, target=label)
+        model = api.mlpRegressor(label=label)
+    if model_type == "neural_network_classifier":
+        _, input_columns = api.one_hot_encode(inplace=True, target=label)
+        model = api.mlpClassifier(label=label)
+    return model, input_columns
 
 def poll_sqs():
     """
@@ -113,9 +120,9 @@ def process_message(message_body):
 
     print(f"Processing job: {model_id} with dataset: {dataset_s3_key}")
     download_file_from_s3(os.environ.get('AWS_S3_BUCKET'), dataset_s3_key, 'dataset.csv')
-    model = train_model(model_type, hyperparams, label)
+    model, input_columns = train_model(model_type, hyperparams, label)
     # model = LinearRegression() # hardcode model for now
     with open('model.pkl', 'wb') as file:
         pickle.dump(model, file)
-    upload_file_to_rails(model_id, 'model.pkl')
+    upload_file_to_rails(model_id, input_columns, 'model.pkl')
     print(f"Job {model_id} completed.")

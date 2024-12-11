@@ -93,7 +93,8 @@ class ModelsController < ApplicationController
     @model = Model.find(params[:id])
     if params[:file].present?
       @model.file.attach(params[:file]) # Attach the uploaded file to the model
-      @model.update(status: 'trained')
+      ordered_input_columns = JSON.parse(params[:input_columns])
+      @model.update(status: 'trained', ordered_input_columns: ordered_input_columns)
       render json: { message: "File uploaded successfully", model: @model }, status: :ok
     else
       render json: { error: "No file provided" }, status: :unprocessable_entity
