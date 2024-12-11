@@ -22,14 +22,14 @@ class ModelRecommender
     if ['float', 'integer'].include?(column_type(columns.first))
       [
         { model_type: "linear_regression", hyperparams: { regularization: "l2" } },
-        { model_type: "neural_network_regression", hyperparams: { iterations: 300} },
+        # { model_type: "neural_network_regression", hyperparams: { iterations: 300} },
       ]
     else
       [
         { model_type: "logistic_regression", hyperparams: { regularization: "l2" } },
         { model_type: "decision_tree", hyperparams: { max_depth: 5 } },
         { model_type: "svm", hyperparams: { kernel: "rbf", C: 1.0 } },
-        { model_type: "neural_network_classifier", hyperparams: { iterations: 300 } }
+        # { model_type: "neural_network_classifier", hyperparams: { iterations: 300 } }
       ]
     end
     # if r2 > 0.7

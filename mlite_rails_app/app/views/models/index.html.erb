@@ -1,7 +1,7 @@
 <% content_for :title, "Models" %>
 
 
-<div class="flex flex-col items-center justify-around gap-7">
+<div class="flex flex-col items-center justify-center gap-7">
 
   <h1 class="text-5xl">Models</h1>
   <%= link_to new_model_path, class: "btn btn-sm btn-primary" do %>
@@ -10,14 +10,13 @@
     </svg>
     Train New Model
   <% end %>
-</div>
 
-
-<div class="info-text" style="margin-top: 20px;">
-  <p>
-    Discover and manage machine learning models. This page provides automatic suggestions for the most suitable models based on your dataset. You can also schedule
-    cloud-based training jobs for these models to minimize local resource usage.
-  </p>
+  <div class="info-text w-1/2" style="margin-top: 10px;">
+    <p>
+      Discover and manage machine learning models. This page provides automatic suggestions for the most suitable models based on your dataset. You can also schedule
+      cloud-based training jobs for these models to minimize local resource usage.
+    </p>
+  </div>
 </div>
 
 

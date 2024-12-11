@@ -1,7 +1,7 @@
-<% content_for :title, "Showing dataset" %>
+<% content_for :title, "Dataset" %>
 
 <div class="flex flex-col items-center justify-around gap-7 mb-6">
-  <h1 class="text-5xl text-center">Showing Dataset: <%= @dataset.name %></h1>
+  <h1 class="text-5xl text-center">Dataset: <%= @dataset.name %></h1>
   <%= link_to datasets_path, class: "btn btn-sm btn-primary-outline flex justify-center" do %>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
       <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
@@ -32,6 +32,8 @@
 </div>
 
 <p class="text-center text-green-600"><%= notice %></p>
+
+<h2 class="text-3xl text-center mt-10 mb-10">Dataset Metrics</h2>
 
 <% if @dataset&.metrics.present? %>
   <div class="carousel w-full mx-auto w-3/4 mb-6">
@@ -82,13 +84,13 @@
 <% end %>
 
 <div class="flex flex-col items-center gap-5">
-  <h2 class="text-3xl text-center">Data Preview</h2>
+  <h2 class="text-3xl text-center">Dataset Preview</h2>
 
   <% if @limited %>
-    <p class="text-center"><strong>Note:</strong> Showing the first 20 and last 10 rows of the dataset.</p>
+    <p class="text-center"><strong>Note:</strong> Showing the first 10 and last 10 rows of the dataset.</p>
 
     <div class="card bg-base-100 shadow-xl overflow-x-auto mx-auto w-3/4 mb-6">
-      <h3 class="text-center">First 20 Rows</h3>
+      <h3 class="text-center">First 10 Rows</h3>
       <table class="table text-center w-full border-collapse border border-gray-300">
         <thead>
         <tr>

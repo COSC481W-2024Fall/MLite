@@ -47,18 +47,19 @@
         </svg>
       <% end %>
 
-      <div class="px-3"></div>
-
       <% if model.file.attached? %>
+        <div class="px-3"></div>
           <%= link_to rails_blob_path(model.file, disposition: "attachment"), class: "btn text-primary flex items-center justify-center space-x-2" do %>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
           <% end %>
       <% end %>
-      <%= link_to new_deployment_path(deployment: {model_id: model.id}), class: "btn btn-primary" do %>
-        Deploy
-    <% end %>
+      <% if model.status == "trained" %>
+        <%= link_to new_deployment_path(deployment: {model_id: model.id}), class: "btn btn-primary" do %>
+          Deploy
+        <% end %>
+      <% end %>
     </div>
   </div>
 </div>
